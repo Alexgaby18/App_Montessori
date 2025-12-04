@@ -1,4 +1,5 @@
 // ...existing code...
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -11,8 +12,14 @@ import 'package:my_montessori/core/theme/animatic_background.dart';
 class CompleteLetterScreen extends StatefulWidget {
   final int index; // índice en la lista `letters`
   final String word; // opcional: palabra objetivo (si no viene, usamos first)
+  final int? targetIndex; // posición a completar (opcional)
 
-  const CompleteLetterScreen({Key? key, required this.index, this.word = ''}) : super(key: key);
+  const CompleteLetterScreen({
+    Key? key,
+    required this.index,
+    this.word = '',
+    this.targetIndex,
+  }) : super(key: key);
 
   @override
   State<CompleteLetterScreen> createState() => _CompleteLetterScreenState();
@@ -21,29 +28,74 @@ class CompleteLetterScreen extends StatefulWidget {
 class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
   late final Letter _letterObj;
   late final String _word; // palabra en mayúsculas sin espacios
+  late final int _targetIndex; // posición que el alumno debe completar
   late List<String?> _slots;
   late List<String> _pool; // letras disponibles (shuffled)
+  final _random = Random();
 
   @override
   void initState() {
     super.initState();
     _letterObj = letters[widget.index];
     _word = (widget.word.isNotEmpty ? widget.word : _letterObj.words.first).toUpperCase();
-    _slots = List<String?>.filled(_word.length, null);
-    // pool: letras de la palabra + algunas letras extras opcionalmente
-    _pool = _word.split('');
-    // agregar letras extra (vocales) para opciones
-    _pool.addAll(['A', 'E', 'I', 'O', 'U']);
-    _pool = _pool.map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
-    _pool.shuffle(Random());
+
+    // determina posición objetivo: usa la pasada por parámetro o calcula una adecuada
+    _targetIndex = widget.targetIndex ?? _chooseTargetIndex(_word);
+
+    // inicializa slots: posición objetivo = null, resto muestran la letra
+    _slots = List<String?>.generate(_word.length, (i) => i == _targetIndex ? null : _word[i]);
+    // Pool: incluir la letra correcta + distractores aleatorios
+    _setupPool();
   }
 
-  void _onCorrectComplete() {
-    AudioService.instance.speak('¡Muy bien!'); // o reproducir asset
-    // animación / navegar / marcar como completado...
+  // Elige una posición recomendada para ocultar:
+  // preferimos la primera consonante que NO sea la primera letra,
+  // si no hay, elegimos la segunda letra, si no la primera.
+  int _chooseTargetIndex(String word) {
+    final vowels = 'AEIOUÁÉÍÓÚ';
+    for (int i = 1; i < word.length; i++) {
+      final ch = word[i];
+      if (!vowels.contains(ch)) return i; // consonante no primera
+    }
+    if (word.length > 1) return 1;
+    return 0;
   }
 
-  bool get _isComplete => _slots.every((s) => s != null && s!.isNotEmpty);
+  void _setupPool() {
+    final alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    final correct = _word[_targetIndex];
+    final Set<String> poolSet = {correct};
+
+    // Añade hasta 6 opciones (1 correcta + 5 distractores), evitando repetidos
+    while (poolSet.length < 6) {
+      final c = alphabet[_random.nextInt(alphabet.length)];
+      if (c != correct) poolSet.add(c);
+    }
+
+    _pool = poolSet.toList();
+    _pool.shuffle(_random);
+  }
+
+  Future<void> _onCorrectComplete() async {
+    // Repite la palabra al completar (usa speak para nombre de la palabra)
+    await AudioService.instance.speak(_word);
+    // breve pausa y avanzar automáticamente a la siguiente letra si existe
+    await Future.delayed(const Duration(milliseconds: 700));
+    final hasNext = widget.index < letters.length - 1;
+    if (hasNext) {
+      final nextIndex = widget.index + 1;
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => CompleteLetterScreen(index: nextIndex)),
+      );
+    } else {
+      // fin de la lista: feedback final
+      await AudioService.instance.speak('¡Has completado todas las letras!');
+    }
+  }
+
+  bool get _isFirstSlotFilled => _slots[0] != null && _slots[0]!.isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
@@ -52,66 +104,80 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
     final prevIndex = (widget.index - 1).clamp(0, letters.length - 1);
     final nextIndex = (widget.index + 1).clamp(0, letters.length - 1);
 
-    // ahora usamos pictogramFile (Future<File?>) en vez de asset directo
     final Future mainPictogramFuture = _letterObj.pictogramFile(_letterObj.words.first);
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 174, 220, 235),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.volume_up, color: Colors.black87),
-            onPressed: () {
-              // instrucción de la actividad
-              AudioService.instance.speak('Toca las letras para completar la palabra');
-            },
-          ),
-        ],
+        title: Text('Complete Letter ${_letterObj.char}'),
+        backgroundColor: const Color.fromARGB(255, 68, 194, 193),
       ),
       body: Stack(
         children: [
           const BackgroundAnimation(),
+          // icono volumen (a la derecha)
+          Positioned(
+            right: 8,
+            top: 8,
+            child: IconButton(
+              icon: const Icon(Icons.volume_up),
+              iconSize: 44,
+              color: const Color.fromARGB(255, 55, 35, 28),
+              onPressed: () {
+                AudioService.instance.speak("Completa la palabra con  la letra ${_letterObj.char}");
+              },
+            ),
+          ),
           SafeArea(
             child: Column(
               children: [
-                const SizedBox(height: 8),
+                const SizedBox(height: 100),
 
-                // pictograma grande: usamos FutureBuilder para el File devuelto por pictogramFile()
+                // pictograma grande usando ButtonPictogramLetters (muestra imagen + nombre)
                 Center(
-                  child: FutureBuilder(
-                    future: mainPictogramFuture,
-                    builder: (context, AsyncSnapshot snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const SizedBox(
-                          width: 220,
-                          height: 220,
-                          child: Center(child: CircularProgressIndicator()),
-                        );
-                      }
-                      final file = snapshot.data;
-                      return Card(
-                        elevation: 6,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                        child: Container(
-                          width: 220,
-                          height: 220,
-                          padding: const EdgeInsets.all(12),
-                          child: (file != null)
-                              ? Image.file(file, fit: BoxFit.contain)
-                              : Image.asset('assets/images/pictogram_letters/${_letterObj.char.toLowerCase()}/${_letterObj.words.first.toLowerCase().replaceAll(' ', '_')}.png', fit: BoxFit.contain),
-                        ),
-                      );
+                  child: ButtonPictogramLetters(
+                    pictogramFuture: _letterObj.pictogramFile(_letterObj.words.first),
+                    size: 180.0,
+                    onPressed: () async {
+                      await AudioService.instance.speak(_word);
                     },
+                    letters: _word,
+                  ),
+                ),
+                // navegación opcional abajo
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8, ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (hasPrev)
+                        IconButton(
+                          color: Color.fromARGB(255, 55, 35, 28),
+                          onPressed: () => Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (_) => CompleteLetterScreen(index: prevIndex)),
+                          ),
+                          icon: const Icon(Icons.arrow_back_ios),
+                        )
+                      else
+                        const SizedBox(width: 48),
+                      if (hasNext)
+                        IconButton(
+                          color: Color.fromARGB(255, 55, 35, 28),
+                          onPressed: () => Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (_) => CompleteLetterScreen(index: nextIndex)),
+                          ),
+                          icon: const Icon(Icons.arrow_forward_ios),
+                        )
+                      else
+                        const SizedBox(width: 48),
+                    ],
                   ),
                 ),
 
-                const SizedBox(height: 12),
-                // palabra objetivo: slots (DragTargets)
+                const SizedBox(height: 30),
+
+                // palabra objetivo: mostrada con la primera letra como DragTarget y el resto visibles
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -125,14 +191,14 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 18),
+                const SizedBox(height: 30),
 
-                // pool de letras (draggables). Para cada palabra de la lista usamos pictogramFile(word)
+                // pool de letras (draggables) en orden aleatorio (ya barajado en _setupPool)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
+                    spacing: 15,
+                    runSpacing: 15,
                     alignment: WrapAlignment.center,
                     children: _pool.map((letter) => _buildDraggableTile(letter)).toList(),
                   ),
@@ -140,35 +206,7 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
 
                 const Spacer(),
 
-                // flechas navegación abajo (opcional)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      if (hasPrev)
-                        IconButton(
-                          onPressed: () => Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (_) => CompleteLetterScreen(index: prevIndex)),
-                          ),
-                          icon: const Icon(Icons.arrow_back_ios),
-                        )
-                      else
-                        const SizedBox(width: 48),
-                      if (hasNext)
-                        IconButton(
-                          onPressed: () => Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (_) => CompleteLetterScreen(index: nextIndex)),
-                          ),
-                          icon: const Icon(Icons.arrow_forward_ios),
-                        )
-                      else
-                        const SizedBox(width: 48),
-                    ],
-                  ),
-                ),
+                
               ],
             ),
           ),
@@ -179,32 +217,43 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
 
   Widget _buildSlot(int index) {
     final content = _slots[index];
+    // Si no es la posición objetivo, mostramos la letra fija del _word
+    if (index != _targetIndex) {
+      return Container(
+        width: 54,
+        height: 54,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: const Color(0xFFB7C2D7), width: 1.8),
+          boxShadow: const [BoxShadow(color: Color(0x22000000), blurRadius: 4, offset: Offset(1,2))],
+        ),
+        child: Center(
+          child: Text(
+            _word[index],
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
+          ),
+        ),
+      );
+    }
+
+    // Para la posición objetivo usamos DragTarget
     return DragTarget<String>(
       onWillAccept: (data) => data != null,
       onAccept: (data) async {
-        setState(() {
-          _slots[index] = data;
-          // quitar una instancia de esa letra del pool para que no se reutilice
-          final removed = _pool.indexOf(data);
-          if (removed != -1) _pool.removeAt(removed);
-        });
-        // si correcto en esa posición, reproducir sonido de la letra
-        if (_slots[index] == _word[index]) {
-          await AudioService.instance.playLetterSound(_slots[index]!);
-        } else {
-          // opcional: reproducir feedback de error
-          await AudioService.instance.speak('Intenta de nuevo');
-        }
+        if (data == _word[_targetIndex]) {
+          setState(() {
+            _slots[_targetIndex] = data;
+            final removed = _pool.indexOf(data);
+            if (removed != -1) _pool.removeAt(removed);
+          });
 
-        if (_isComplete) {
-          // comprobar si la palabra es correcta
-          final formed = _slots.join();
-          if (formed == _word) {
-            _onCorrectComplete();
-          } else {
-            // si no es correcta, reset parcial o permitir corrección
-            await AudioService.instance.speak('No coincide, intenta otra vez');
-          }
+          // decir el nombre de la letra (usa speakLetter) y luego repetir la palabra y avanzar
+          await AudioService.instance.speakLetter(_slots[_targetIndex]!);
+          await _onCorrectComplete();
+        } else {
+          // feedback de error breve
+          await AudioService.instance.speak('Intenta de nuevo');
         }
       },
       builder: (context, candidateData, rejectedData) {
@@ -212,7 +261,7 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
           width: 54,
           height: 54,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: content == null ? Colors.white : const Color(0xFFFAFAFA),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: const Color(0xFFB7C2D7), width: 1.8),
             boxShadow: const [BoxShadow(color: Color(0x22000000), blurRadius: 4, offset: Offset(1,2))],
@@ -229,13 +278,13 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
   }
 
   Widget _buildDraggableTile(String letter) {
-    // reutiliza ButtonLetter visual y comportamiento al pulsar (reproduce sonido)
     final tile = SizedBox(
       width: 64,
       height: 64,
       child: ButtonLetter(
         letter: letter,
-        onPressed: () => AudioService.instance.playLetterSound(letter),
+        // tocar tile solo pronuncia la letra (no cambia estado)
+        onPressed: () => AudioService.instance.speakLetter(letter),
         size: 64,
       ),
     );

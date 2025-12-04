@@ -21,8 +21,8 @@ class ButtonLetter extends StatelessWidget {
       height: size,
       child: ElevatedButton(
         onPressed: () async {
-          // reproduce audio pregrabado para la letra (o fallback fonético)
-          await AudioService.instance.playLetterSound(letter);
+          // habla la letra directamente (la letra proviene de la lista)
+          await AudioService.instance.speakLetter(letter);
           onPressed();
         },
         style: ElevatedButton.styleFrom(

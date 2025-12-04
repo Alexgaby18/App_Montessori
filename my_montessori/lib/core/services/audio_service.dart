@@ -24,11 +24,19 @@ class AudioService {
     'U': 'oo', 'V': 'vvv', 'W': 'wuh', 'X': 'ks', 'Y': 'yuh', 'Z': 'zzz',
   };
 
+  /// Habla cualquier texto por TTS
   Future<void> speak(String text) async {
     try {
       await _tts.stop();
       await _tts.speak(text);
     } catch (_) {}
+  }
+
+  /// Helper: habla la letra tal como viene (ej. 'M' -> TTS pronunciará la letra)
+  Future<void> speakLetter(String letter) async {
+    if (letter.trim().isEmpty) return;
+    // usamos directamente la letra desde la lista (por ejemplo 'M')
+    await speak(letter.trim());
   }
 
   Future<void> stop() async {

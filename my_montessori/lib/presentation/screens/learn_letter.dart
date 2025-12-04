@@ -40,11 +40,10 @@ class LearnLetterScreen extends StatelessWidget {
               iconSize: 44,
               color: const Color.fromARGB(255, 55, 35, 28),
               onPressed: () {
-                AudioService.instance.speak('Toca la letra o las imágenes para escuchar su nombre');
+                AudioService.instance.speak("Toca la letra ${currentLetter.char}");
               },
             ),
           ),
-
           SafeArea(
             child: Column(
               children: [
@@ -59,45 +58,36 @@ class LearnLetterScreen extends StatelessWidget {
                 const SizedBox(height: 20),
 
                 // Flechas: izquierda oculta en la primera letra
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    if (hasPrev)
-                      IconButton(
-                        onPressed: () {
-                          Navigator.pushReplacement(
+                // navegación opcional abajo
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8, ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (hasPrev)
+                        IconButton(
+                          color: Color.fromARGB(255, 55, 35, 28),
+                          onPressed: () => Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => LearnLetterScreen(index: prevIndex),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.arrow_back),
-                        iconSize: 40,
-                        padding: const EdgeInsets.all(25),
-                        color: const Color.fromARGB(255, 55, 35, 28),
-                      )
-                    else
-                      const SizedBox(width: 72), // mantener espacio para composición
-
-                    if (hasNext)
-                      IconButton(
-                        onPressed: () {
-                          Navigator.pushReplacement(
+                            MaterialPageRoute(builder: (_) => LearnLetterScreen(index: prevIndex)),
+                          ),
+                          icon: const Icon(Icons.arrow_back_ios),
+                        )
+                      else
+                        const SizedBox(width: 48),
+                      if (hasNext)
+                        IconButton(
+                          color: Color.fromARGB(255, 55, 35, 28),
+                          onPressed: () => Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => LearnLetterScreen(index: nextIndex),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.arrow_forward),
-                        iconSize: 40,
-                        padding: const EdgeInsets.all(25),
-                        color: const Color.fromARGB(255, 55, 35, 28),
-                      )
-                    else
-                      const SizedBox(width: 72),
-                  ],
+                            MaterialPageRoute(builder: (_) => LearnLetterScreen(index: nextIndex)),
+                          ),
+                          icon: const Icon(Icons.arrow_forward_ios),
+                        )
+                      else
+                        const SizedBox(width: 48),
+                    ],
+                  ),
                 ),
 
                 const SizedBox(height: 10),
