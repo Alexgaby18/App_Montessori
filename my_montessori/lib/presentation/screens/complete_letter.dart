@@ -39,8 +39,16 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
     _letterObj = letters[widget.index];
     _word = (widget.word.isNotEmpty ? widget.word : _letterObj.words.first).toUpperCase();
 
-    // determina posición objetivo: usa la pasada por parámetro o calcula una adecuada
-    _targetIndex = widget.targetIndex ?? _chooseTargetIndex(_word);
+    // Intentar usar la posición de la letra que estamos enseñando dentro de la palabra.
+    // Ej: letra = 'X', palabra = 'TAXI' -> targetIndex = 2
+    final teachingChar = _letterObj.char.toUpperCase();
+    final found = _word.indexOf(teachingChar);
+    if (found != -1) {
+      _targetIndex = found;
+    } else {
+      // Si la letra no aparece en la palabra, elegimos una posición razonable
+      _targetIndex = widget.targetIndex ?? _chooseFallbackTargetIndex(_word);
+    }
 
     // inicializa slots: posición objetivo = null, resto muestran la letra
     _slots = List<String?>.generate(_word.length, (i) => i == _targetIndex ? null : _word[i]);
@@ -48,10 +56,10 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
     _setupPool();
   }
 
-  // Elige una posición recomendada para ocultar:
+  // Heurística de reserva (no encontrada la letra en la palabra)
   // preferimos la primera consonante que NO sea la primera letra,
   // si no hay, elegimos la segunda letra, si no la primera.
-  int _chooseTargetIndex(String word) {
+  int _chooseFallbackTargetIndex(String word) {
     final vowels = 'AEIOUÁÉÍÓÚ';
     for (int i = 1; i < word.length; i++) {
       final ch = word[i];
@@ -63,10 +71,9 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
 
   void _setupPool() {
     final alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    final correct = _word[_targetIndex];
+    final correct = _word[_targetIndex]; // correcto: la letra en la posición objetivo
     final Set<String> poolSet = {correct};
 
-    // Añade hasta 6 opciones (1 correcta + 5 distractores), evitando repetidos
     while (poolSet.length < 6) {
       final c = alphabet[_random.nextInt(alphabet.length)];
       if (c != correct) poolSet.add(c);
