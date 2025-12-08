@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:my_montessori/core/services/audio_service.dart';
 import 'package:my_montessori/core/constans/typography.dart';
-import 'package:my_montessori/core/services/audio_service.dart';
 
 class ButtonPictogramLetters extends StatelessWidget {
   final Future<File?> pictogramFuture; 
@@ -24,7 +23,7 @@ class ButtonPictogramLetters extends StatelessWidget {
     this.borderColor = const Color(0xFFB7C2D7),
     this.borderWidth = 1.5,
     this.shadowColor = const Color(0xFFB7C2D7),
-    this.borderRadius = 12.0,
+    this.borderRadius = 8.0,
     required this.letters,
   }) : super(key: key);
 

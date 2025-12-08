@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:my_montessori/data/repositories/arasaac_api.dart';
 
 class Letter {
@@ -58,4 +57,23 @@ const List<Letter> letters = [
   Letter(char: 'X', words: ['Taxi', 'Xilófono', 'Examen', 'Éxito']),
   Letter(char: 'Y', words: ['Yate', 'Yogur', 'Yoyo', 'Yegua']),
   Letter(char: 'Z', words: ['Zorro', 'Zapato', 'Zona', 'Pizza']),
+];
+
+// wrapper para exponer palabras sueltas a la UI
+class Word {
+  final String text;
+  final Letter parent; // referencia a la letra a la que pertenece
+  const Word({required this.text, required this.parent});
+
+  // si tu Letter ya tiene pictogramFile(word) que devuelve Future<File?>:
+  Future<File?> pictogramFile() => parent.pictogramFile(text);
+
+  @override
+  String toString() => 'Word(text: $text, parent: ${parent.char})';
+}
+
+// Genera la lista de palabras a partir de `letters` (no const porque se crea dinámicamente)
+final List<Word> words = [
+  for (final l in letters)
+    for (final w in l.words) Word(text: w, parent: l),
 ];

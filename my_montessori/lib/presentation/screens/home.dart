@@ -1,5 +1,4 @@
 import 'dart:developer' as console;
-//import 'package:my_montessori/core/constans/typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:my_montessori/core/theme/animatic_background.dart';
@@ -7,6 +6,8 @@ import 'package:my_montessori/presentation/widgets/button_pictogram.dart';
 import 'package:my_montessori/presentation/screens/learn_letter.dart';
 import 'package:my_montessori/core/constans/list_pitogram.dart';
 import 'package:my_montessori/presentation/screens/complete_letter.dart';
+import 'package:my_montessori/presentation/screens/selection_word.dart';
+import 'package:my_montessori/presentation/screens/conect_letter.dart';
 
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
@@ -67,6 +68,8 @@ class Home extends StatelessWidget {
                           backgroundColor: const Color.fromARGB(255, 245, 163, 35),
                           onPressed: () {
                             console.log('Unir Pressed');
+                            final idx = letters.indexWhere((l) => l.char == 'A');
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => ConnectLetterScreen()));
                           },
                         ),
                         ButtonPictogram(
@@ -75,6 +78,8 @@ class Home extends StatelessWidget {
                           backgroundColor: const Color.fromARGB(255, 234, 155, 184),
                           onPressed: () {
                             console.log('Seleccionar Pressed');
+                            final idx = words.indexWhere((w) => w.text == 'Abeja');
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => SelectionWordScreen(index: idx)));
                           },
                         ),
                         ButtonPictogram(
