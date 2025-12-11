@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:my_montessori/core/theme/animatic_background.dart';
@@ -15,6 +16,9 @@ class ConnectLetterScreen extends StatefulWidget {
 
 class _ConnectLetterScreenState extends State<ConnectLetterScreen> {
   final _random = Random();
+  
+  // Cache de futures para evitar recargas
+  final Map<int, Future<File?>> _pictogramFuturesCache = {};
 
   // índices dentro de `words`
   late List<int> _optionsIdx;
@@ -40,6 +44,8 @@ class _ConnectLetterScreenState extends State<ConnectLetterScreen> {
   void initState() {
     super.initState();
     _initializeGame();
+    // Precargar todos los pictogramas al iniciar
+    _preloadAllPictograms();
   }
 
   void _initializeGame() {
@@ -63,6 +69,29 @@ class _ConnectLetterScreenState extends State<ConnectLetterScreen> {
       _connected[_optionsIdx[i]] = false;
     }
     _completedConnections = 0;
+  }
+
+  // Método para precargar todos los pictogramas
+  void _preloadAllPictograms() {
+    for (final word in words) {
+      if (!_pictogramFuturesCache.containsKey(words.indexOf(word))) {
+        _pictogramFuturesCache[words.indexOf(word)] = word.pictogramFile();
+      }
+    }
+  }
+
+  // Método para obtener el Future del pictograma (usando cache)
+  Future<File?> _getCachedPictogramFuture(int wordIdx) {
+    // Si ya tenemos el future cachead, usarlo
+    if (_pictogramFuturesCache.containsKey(wordIdx)) {
+      return _pictogramFuturesCache[wordIdx]!;
+    }
+    
+    // Si no, crearlo y cachearlo
+    final word = words[wordIdx];
+    final future = word.pictogramFile();
+    _pictogramFuturesCache[wordIdx] = future;
+    return future;
   }
 
   // obtiene centro de widget por GlobalKey relativo al stack
@@ -149,7 +178,6 @@ class _ConnectLetterScreenState extends State<ConnectLetterScreen> {
               return Stack(
                 children: [
                   // painter: líneas fijas + línea dinámica al arrastrar
-                  // Este debe estar POR ENCIMA del fondo pero DEBAJO de los widgets interactivos
                   Positioned.fill(
                     child: CustomPaint(
                       painter: _ConnectLinesPainter(
@@ -197,7 +225,6 @@ class _ConnectLetterScreenState extends State<ConnectLetterScreen> {
                               });
                             },
                             onDragUpdate: (details) {
-                              // convertir global a local del stack
                               final stackBox = _stackKey.currentContext?.findRenderObject() as RenderBox?;
                               if (stackBox != null) {
                                 final local = stackBox.globalToLocal(details.globalPosition);
@@ -210,10 +237,25 @@ class _ConnectLetterScreenState extends State<ConnectLetterScreen> {
                               color: Colors.transparent,
                               child: Opacity(
                                 opacity: 0.95,
-                                child: SizedBox(width: 64, height: 64, child: ButtonLetter(letter: letter, onPressed: () {}, size: 64)),
+                                child: SizedBox(
+                                  width: 64, 
+                                  height: 64, 
+                                  child: ButtonLetter(
+                                    letter: letter, 
+                                    onPressed: () {}, 
+                                    size: 64
+                                  )
+                                ),
                               ),
                             ),
-                            childWhenDragging: Opacity(opacity: 0.25, child: ButtonLetter(letter: letter, onPressed: () {}, size: 64)),
+                            childWhenDragging: Opacity(
+                              opacity: 0.25, 
+                              child: ButtonLetter(
+                                letter: letter, 
+                                onPressed: () {}, 
+                                size: 64
+                              )
+                            ),
                             child: GestureDetector(
                               onTap: () async {
                                 await AudioService.instance.speakLetter(letter);
@@ -240,26 +282,22 @@ class _ConnectLetterScreenState extends State<ConnectLetterScreen> {
                         final optPos = _rightOrder[i];
                         final wordIdx = _optionsIdx[optPos];
                         final wordObj = words[wordIdx];
-                        final pictogramFuture = wordObj.pictogramFile();
+                        
+                        // Usar el método cacheado para obtener el future
+                        final pictogramFuture = _getCachedPictogramFuture(wordIdx);
 
                         return Container(
                           key: _rightKeys[i],
                           margin: const EdgeInsets.symmetric(vertical: 8),
                           child: DragTarget<int>(
-                            onWillAccept: (data) {
-                              // acepta siempre (se comprobará en onAccept si es correcto)
-                              return true;
-                            },
+                            onWillAccept: (data) => true,
                             onAccept: (dataOptPos) async {
-                              // si el optPos coincide con dataOptPos => es correcto
                               if (dataOptPos == optPos) {
                                 await _onAccept(optPos);
                               } else {
-                                // incorrecto: habla la palabra del draggado para feedback
                                 final drWordIdx = _optionsIdx[dataOptPos];
                                 await AudioService.instance.speak(words[drWordIdx].text);
                               }
-                              // limpiar estado de arrastre
                               setState(() {
                                 _draggingLeftPos = null;
                                 _draggingLocalOffset = null;
