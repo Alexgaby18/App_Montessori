@@ -88,7 +88,7 @@ class Home extends StatelessWidget {
                           size: 100.0,
                           backgroundColor: const Color.fromARGB(255, 174, 128, 227),
                           onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => PracticeLetterScreenML()));
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => PracticeLetterScreen()));
                             console.log('Escribir Pressed');
                           },
                         ),
