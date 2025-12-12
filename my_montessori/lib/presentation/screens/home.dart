@@ -2,6 +2,7 @@ import 'dart:developer' as console;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:my_montessori/core/theme/animatic_background.dart';
+import 'package:my_montessori/presentation/screens/practice_letter.dart';
 import 'package:my_montessori/presentation/widgets/button_pictogram.dart';
 import 'package:my_montessori/presentation/screens/learn_letter.dart';
 import 'package:my_montessori/core/constans/list_pitogram.dart';
@@ -87,6 +88,7 @@ class Home extends StatelessWidget {
                           size: 100.0,
                           backgroundColor: const Color.fromARGB(255, 174, 128, 227),
                           onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => PracticeLetterScreenML()));
                             console.log('Escribir Pressed');
                           },
                         ),
