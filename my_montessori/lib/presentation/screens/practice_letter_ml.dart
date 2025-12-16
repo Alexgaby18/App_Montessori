@@ -8,8 +8,9 @@ import 'package:my_montessori/core/utils/drawing_utils.dart';
 import 'package:my_montessori/presentation/widgets/ink_painter.dart';
 
 class PracticeLetterScreenML extends StatefulWidget {
-  const PracticeLetterScreenML({Key? key}) : super(key: key);
-
+  final bool embedded;
+  final int initialIndex; // nuevo índice inicial
+  const PracticeLetterScreenML({Key? key, this.embedded = false, this.initialIndex = 0}) : super(key: key);
   @override
   State<PracticeLetterScreenML> createState() => _PracticeLetterScreenMLState();
 }
@@ -39,16 +40,11 @@ class _PracticeLetterScreenMLState extends State<PracticeLetterScreenML> {
   @override
   void initState() {
     super.initState();
+    _index = widget.initialIndex.clamp(0, letters.isNotEmpty ? letters.length - 1 : 0);
     _initializeModel();
     if (letters.isEmpty) {
       _index = -1;
     }
-  }
-
-  @override
-  void dispose() {
-    _recognizer?.close();
-    super.dispose();
   }
 
   Future<void> _initializeModel() async {
@@ -84,6 +80,12 @@ class _PracticeLetterScreenMLState extends State<PracticeLetterScreenML> {
       // Fallback a comparación local
       _speakSafe('Modelo no disponible, usando verificación básica');
     }
+  }
+
+  @override
+  void dispose() {
+    _recognizer?.close();
+    super.dispose();
   }
 
   void _startStroke(Offset p) {
@@ -294,7 +296,7 @@ class _PracticeLetterScreenMLState extends State<PracticeLetterScreenML> {
     // Método de fallback usando comparación de forma
     final template = _letterTemplatePoints(targetLetter);
     final drawn = _mergeAndNormalizeStrokes(_strokes, template.length);
-    final score = _dtwDistanceNormalized(template, drawn);
+    final score = DrawingUtils.dtwDistance(template, drawn);
     return score >= 0.62;
   }
 
@@ -357,7 +359,6 @@ class _PracticeLetterScreenMLState extends State<PracticeLetterScreenML> {
         ];
     }
   }
-
   List<Offset> _mergeAndNormalizeStrokes(List<List<Offset>> strokes, int targetN) {
     if (strokes.isEmpty) return List.generate(targetN, (i) => Offset(0.5, 0.5));
     final pts = <Offset>[];
@@ -379,49 +380,7 @@ class _PracticeLetterScreenMLState extends State<PracticeLetterScreenML> {
       (p.dy - minY) / size,
     )).toList();
     
-    return _resamplePoints(norm, targetN);
-  }
-
-  List<Offset> _resamplePoints(List<Offset> pts, int n) {
-    if (pts.isEmpty || n <= 1) return pts;
-    
-    final distances = <double>[0.0];
-    for (int i = 1; i < pts.length; i++) {
-      distances.add(distances.last + (pts[i] - pts[i - 1]).distance);
-    }
-    
-    final total = distances.last;
-    if (total == 0) return List.generate(n, (i) => pts[0]);
-    
-    return List.generate(n, (k) {
-      final target = total * k / (n - 1);
-      final index = distances.indexWhere((d) => d >= target);
-      
-      if (index <= 0) return pts[0];
-      
-      final ratio = (target - distances[index - 1]) / (distances[index] - distances[index - 1]);
-      return Offset(
-        pts[index - 1].dx + (pts[index].dx - pts[index - 1].dx) * ratio,
-        pts[index - 1].dy + (pts[index].dy - pts[index - 1].dy) * ratio,
-      );
-    });
-  }
-
-  double _dtwDistanceNormalized(List<Offset> a, List<Offset> b) {
-    final n = a.length;
-    final m = b.length;
-    final dtw = List.generate(n + 1, (_) => List<double>.filled(m + 1, double.infinity));
-    dtw[0][0] = 0.0;
-    
-    for (int i = 1; i <= n; i++) {
-      for (int j = 1; j <= m; j++) {
-        final cost = (a[i - 1] - b[j - 1]).distance;
-        dtw[i][j] = cost + min(min(dtw[i - 1][j], dtw[i][j - 1]), dtw[i - 1][j - 1]);
-      }
-    }
-    
-    final raw = dtw[n][m] / (n + m);
-    return (1.0 - (raw / 0.8)).clamp(0.0, 1.0);
+    return DrawingUtils.resamplePoints(norm, targetN);
   }
 
   Widget _buildCanvas(double width, double height) {
@@ -527,8 +486,117 @@ class _PracticeLetterScreenMLState extends State<PracticeLetterScreenML> {
     );
   }
 
+  Widget _buildContent() {
+    if (_index < 0) {
+      return Center(child: const Text('No hay letras definidas'));
+    }
+    final currentLetter = letters[_index].char.toUpperCase();
+
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // // Indicador de progreso
+          // LinearProgressIndicator(
+          //   value: _index / letters.length,
+          //   backgroundColor: Colors.grey[200],
+          //   valueColor: AlwaysStoppedAnimation<Color>(
+          //     const Color.fromARGB(255, 68, 194, 193),
+          //   ),
+          //   minHeight: 8,
+          //   borderRadius: BorderRadius.circular(4),
+          // ),
+          // const SizedBox(height: 8),
+          
+          // // Contador de letras
+          // Text(
+          //   'Letra ${_index + 1} de ${letters.length}',
+          //   textAlign: TextAlign.center,
+          //   style: TextStyle(
+          //     color: Colors.grey[600],
+          //     fontSize: 14,
+          //   ),
+          // ),
+          // const SizedBox(height: 16),
+          
+          // Área de dibujo
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final size = min(constraints.maxWidth, constraints.maxHeight * 0.8);
+                return Center(
+                  child: SizedBox(
+                    width: size,
+                    height: size,
+                    child: _buildCanvas(size, size),
+                  ),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 20),
+          
+          // Botones de acción
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.delete_outline),
+                  label: const Text('Borrar'),
+                  onPressed: _clearDrawing,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[200],
+                    foregroundColor: Colors.black87,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton.icon(
+                  icon: _checking
+                      ? SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation(Colors.white),
+                          ),
+                        )
+                      : const Icon(Icons.check_circle_outline),
+                  label: _checking
+                      ? const Text('Verificando...')
+                      : const Text('Verificar'),
+                  onPressed: _checking || _strokes.isEmpty ? null : _onCheck,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 68, 194, 193),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Si está embebido, devolvemos solo el contenido sin Scaffold
+    if (widget.embedded) {
+      return _buildContent();
+    }
+
     if (_index < 0) {
       return Scaffold(
         appBar: AppBar(title: const Text('Practicar letras')),
@@ -553,112 +621,7 @@ class _PracticeLetterScreenMLState extends State<PracticeLetterScreenML> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Indicador de progreso
-            LinearProgressIndicator(
-              value: _index / letters.length,
-              backgroundColor: Colors.grey[200],
-              valueColor: AlwaysStoppedAnimation<Color>(
-                const Color.fromARGB(255, 68, 194, 193),
-              ),
-              minHeight: 8,
-              borderRadius: BorderRadius.circular(4),
-            ),
-            const SizedBox(height: 8),
-            
-            // Contador de letras
-            Text(
-              'Letra ${_index + 1} de ${letters.length}',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(height: 16),
-            
-            // Área de dibujo
-            Expanded(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final size = min(constraints.maxWidth, constraints.maxHeight * 0.8);
-                  return Center(
-                    child: SizedBox(
-                      width: size,
-                      height: size,
-                      child: _buildCanvas(size, size),
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 20),
-            
-            // Botones de acción
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    icon: const Icon(Icons.delete_outline),
-                    label: const Text('Borrar'),
-                    onPressed: _clearDrawing,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[200],
-                      foregroundColor: Colors.black87,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    icon: _checking
-                        ? SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation(Colors.white),
-                            ),
-                          )
-                        : const Icon(Icons.check_circle_outline),
-                    label: _checking
-                        ? const Text('Verificando...')
-                        : const Text('Verificar'),
-                    onPressed: _checking || _strokes.isEmpty ? null : _onCheck,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 68, 194, 193),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            
-            // Instrucciones
-            Text(
-              'Traza la letra $currentLetter en el área de arriba',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ],
-        ),
-      ),
+      body: _buildContent(),
     );
   }
 }
