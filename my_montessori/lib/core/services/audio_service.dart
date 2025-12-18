@@ -8,6 +8,10 @@ class AudioService {
     _tts.setLanguage('es-ES');
     _tts.setSpeechRate(0.45);
     _tts.setVolume(1.0);
+    // Configurar para que los futuros `speak` completen cuando termine la reproducción
+    try {
+      _tts.awaitSpeakCompletion(true);
+    } catch (_) {}
     _player = AudioPlayer();
   }
 

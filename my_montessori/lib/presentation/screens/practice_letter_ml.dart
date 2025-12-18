@@ -10,7 +10,8 @@ import 'package:my_montessori/presentation/widgets/ink_painter.dart';
 class PracticeLetterScreenML extends StatefulWidget {
   final bool embedded;
   final int initialIndex; // nuevo índice inicial
-  const PracticeLetterScreenML({Key? key, this.embedded = false, this.initialIndex = 0}) : super(key: key);
+  final ValueChanged<int>? onIndexChanged;
+  const PracticeLetterScreenML({Key? key, this.embedded = false, this.initialIndex = 0, this.onIndexChanged}) : super(key: key);
   @override
   State<PracticeLetterScreenML> createState() => _PracticeLetterScreenMLState();
 }
@@ -45,6 +46,15 @@ class _PracticeLetterScreenMLState extends State<PracticeLetterScreenML> {
     if (letters.isEmpty) {
       _index = -1;
     }
+    // Anunciar la letra al abrir la pantalla (embedded o no)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (_index >= 0 && _index < letters.length) {
+        try {
+          AudioService.instance.speakLetter(letters[_index].char.toUpperCase());
+        } catch (_) {}
+      }
+    });
   }
 
   Future<void> _initializeModel() async {
@@ -129,13 +139,13 @@ class _PracticeLetterScreenMLState extends State<PracticeLetterScreenML> {
 
   Future<void> _onCheck() async {
     if (_index < 0 || _strokes.isEmpty) return;
-    
+
     setState(() => _checking = true);
-    
+
     final currentLetter = letters[_index].char.toUpperCase();
     bool passed = false;
     String? recognizedText;
-    
+
     try {
       if (_isModelLoaded && _recognizer != null) {
         // Usar Google ML Kit para reconocimiento
@@ -149,43 +159,41 @@ class _PracticeLetterScreenMLState extends State<PracticeLetterScreenML> {
       // Usar método local como último recurso
       passed = await _checkWithLocalComparison(currentLetter);
     }
-    
+
     if (passed) {
+      // Felicitación y luego anunciar la siguiente letra sin cortar audio
+      final nextIndex = (_index + 1) % letters.length;
       await _speakSafe('¡Excelente! Has escrito la letra $currentLetter correctamente');
       await Future.delayed(const Duration(milliseconds: 500));
-      
-      // Avanzar a la siguiente letra
+
       setState(() {
-        _index = (_index + 1) % letters.length;
+        _index = nextIndex;
         _strokes = [];
       });
-      
-      // Pronunciar la nueva letra
-      final newLetter = letters[_index].char.toUpperCase();
-      await AudioService.instance.speakLetter(newLetter);
-      
+
+      // Notify parent (so AppBar title updates when embedded)
+      try {
+        widget.onIndexChanged?.call(_index);
+      } catch (_) {}
+
+      // Give the UI a short moment to update before speaking the next letter
+      await Future.delayed(const Duration(milliseconds: 400));
+
+      try {
+        await AudioService.instance.speakLetter(letters[_index].char.toUpperCase());
+      } catch (_) {}
     } else {
-      final feedback = recognizedText != null 
-          ? 'Has escrito "$recognizedText". Intenta escribir "$currentLetter"'
+      final feedback = recognizedText != null
+          ? 'Has escrito "${recognizedText}". Intenta escribir "${currentLetter}"'
           : 'Intenta de nuevo la letra $currentLetter';
       await _speakSafe(feedback);
     }
-    
+
     setState(() => _checking = false);
   }
 
-  Future<bool> _checkWithGoogleML(String targetLetter) async {
-    String _normalize(String s) {
-      // quita espacios, acentos y pasa a mayúsculas para comparar
-      String out = s.trim().toUpperCase();
-      const accents = 'ÁÉÍÓÚÀÈÌÒÙÄËÏÖÜÑÇáéíóúàèìòùäëïöüñç';
-      const replacements = 'AEIOUAEIOUAEIOUNCaeiouaeiouaeiounc';
-      for (int i = 0; i < accents.length && i < replacements.length; i++) {
-        out = out.replaceAll(accents[i], replacements[i]);
-      }
-      return out;
-    }
-
+    // Reconocimiento con Google ML Kit (función)
+    Future<bool> _checkWithGoogleML(String targetLetter) async {
     // helper para crear Ink
     Ink _buildInk({required bool normalize, required bool epochTimes, int scaleTo = 256}) {
       final allPts = <Offset>[];
@@ -322,6 +330,22 @@ class _PracticeLetterScreenMLState extends State<PracticeLetterScreenML> {
     try {
       await AudioService.instance.speak(text);
     } catch (_) {}
+  }
+
+  String _normalize(String s) {
+    var out = s.trim().toUpperCase();
+    final map = {
+      'Á': 'A', 'À': 'A', 'Â': 'A', 'Ä': 'A',
+      'É': 'E', 'È': 'E', 'Ê': 'E', 'Ë': 'E',
+      'Í': 'I', 'Ì': 'I', 'Î': 'I', 'Ï': 'I',
+      'Ó': 'O', 'Ò': 'O', 'Ô': 'O', 'Ö': 'O',
+      'Ú': 'U', 'Ù': 'U', 'Û': 'U', 'Ü': 'U',
+      'Ñ': 'N', 'Ç': 'C',
+    };
+    map.forEach((k, v) {
+      out = out.replaceAll(k, v);
+    });
+    return out;
   }
 
   // Métodos auxiliares para el fallback local
@@ -613,10 +637,12 @@ class _PracticeLetterScreenMLState extends State<PracticeLetterScreenML> {
         actions: [
           IconButton(
             icon: const Icon(Icons.volume_up),
-            onPressed: () {
-              AudioService.instance.speakLetter(currentLetter);
-              Future.delayed(const Duration(milliseconds: 300))
-                .then((_) => AudioService.instance.speak('Practica trazando la letra $currentLetter'));
+            onPressed: () async {
+              try {
+                await AudioService.instance.speakLetter(currentLetter);
+                await Future.delayed(const Duration(milliseconds: 300));
+                await AudioService.instance.speak('Practica trazando la letra $currentLetter');
+              } catch (_) {}
             },
           ),
         ],

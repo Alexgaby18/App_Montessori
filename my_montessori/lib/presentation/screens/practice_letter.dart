@@ -21,7 +21,11 @@ class _PracticeLetterScreenState extends State<PracticeLetterScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          _useMachineLearning ? 'Practicar letras (ML)' : 'Practicar letras',
+          _useMachineLearning
+              ? (_mlStartIndex >= 0 && _mlStartIndex < letters.length
+                  ? 'Practicar letra ${letters[_mlStartIndex].char.toUpperCase()}'
+                  : 'Practicar letras (ML)')
+              : 'Practicar letras',
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         backgroundColor: const Color.fromARGB(255, 68, 194, 193),
@@ -36,7 +40,7 @@ class _PracticeLetterScreenState extends State<PracticeLetterScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       IconButton(
                         iconSize: 44,
@@ -51,7 +55,7 @@ class _PracticeLetterScreenState extends State<PracticeLetterScreen> {
                         onPressed: () {
                           AudioService.instance.speak(
                             _useMachineLearning
-                                ? 'Practica trazando las letras'
+                                ? 'Practica trazando la letra ${letters[_mlStartIndex].char.toUpperCase()}'
                                 : 'Selecciona una letra para practicar',
                           );
                         },
@@ -62,9 +66,10 @@ class _PracticeLetterScreenState extends State<PracticeLetterScreen> {
                 Expanded(
                   child: _useMachineLearning
                       ? PracticeLetterScreenML(
-                          embedded: true,
-                          initialIndex: _mlStartIndex,
-                        )
+                              embedded: true,
+                              initialIndex: _mlStartIndex,
+                              onIndexChanged: (newIndex) => setState(() => _mlStartIndex = newIndex),
+                            )
                       : Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Column(
