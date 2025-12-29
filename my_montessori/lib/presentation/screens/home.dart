@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:my_montessori/core/theme/animatic_background.dart';
 import 'package:my_montessori/presentation/screens/practice_letter.dart';
+import 'package:my_montessori/presentation/screens/speak_word.dart';
 import 'package:my_montessori/presentation/widgets/button_pictogram.dart';
 import 'package:my_montessori/presentation/screens/learn_letter.dart';
 import 'package:my_montessori/core/constans/list_pitogram.dart';
@@ -97,6 +98,7 @@ class Home extends StatelessWidget {
                           size: 100.0,
                           backgroundColor: const Color.fromARGB(255, 215, 68, 57),
                           onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => SpeakWordScreen(word: words.first)));
                             console.log('Leer Pressed');
                           },
                         ),
