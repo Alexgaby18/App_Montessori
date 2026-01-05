@@ -25,12 +25,15 @@ class _SelectionWordScreenState extends State<SelectionWordScreen> {
   late List<Word> options;
   final _random = Random();
   bool _locked = false; // evita pulsaciones mientras se procesa
+  late final Future<File?> pictogramFuture;
 
   @override
   void initState() {
     super.initState();
     currentWord = words[widget.index];
     _buildOptions();
+    // Guardar el Future una sola vez para que no se recree en cada build
+    pictogramFuture = currentWord.pictogramFile();
   }
 
   void _buildOptions() {
@@ -50,34 +53,35 @@ class _SelectionWordScreenState extends State<SelectionWordScreen> {
 
   Future<void> _onOptionPressed(Word selected) async {
     if (_locked) return;
-    setState(() => _locked = true);
 
     if (selected.text == currentWord.text) {
-      // respuesta correcta
-      await AudioService.instance.speak('¡Muy bien!');
-      await Future.delayed(const Duration(milliseconds: 800));
-      await AudioService.instance.speak(currentWord.text); // repetir la palabra
-      // avanzar automáticamente después de una pausa corta
-      await Future.delayed(const Duration(milliseconds: 600));
-      final hasNext = widget.index < words.length - 1;
-      if (hasNext) {
-        final nextIndex = widget.index + 1;
-        if (!mounted) return;
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => SelectionWordScreen(index: nextIndex)),
-        );
-      } else {
-        await AudioService.instance.speak('¡Has completado todas las palabras!');
-        if (mounted) Navigator.pop(context);
+      // respuesta correcta: bloquear la UI para evitar pulsaciones mientras se procesa
+      setState(() => _locked = true);
+      try {
+        await AudioService.instance.speak('¡Muy bien!');
+        await Future.delayed(const Duration(milliseconds: 800));
+        await AudioService.instance.speak(currentWord.text); // repetir la palabra
+        // avanzar automáticamente después de una pausa corta
+        await Future.delayed(const Duration(milliseconds: 600));
+        final hasNext = widget.index < words.length - 1;
+        if (hasNext) {
+          final nextIndex = widget.index + 1;
+          if (!mounted) return;
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => SelectionWordScreen(index: nextIndex)),
+          );
+        } else {
+          await AudioService.instance.speak('¡Has completado todas las palabras!');
+          if (mounted) Navigator.pop(context);
+        }
+      } finally {
+        if (mounted) setState(() => _locked = false);
       }
     } else {
-      // incorrecto
+      // incorrecto: sólo dar feedback de audio, sin bloquear ni atenuar toda la UI
       await AudioService.instance.speak(selected.text);
-      // pequeño feedback visual: no necesario aquí (puedes agregar animación)
     }
-
-    if (mounted) setState(() => _locked = false);
   }
 
   @override
@@ -87,8 +91,7 @@ class _SelectionWordScreenState extends State<SelectionWordScreen> {
     final int prevIndex = widget.index - 1;
     final int nextIndex = widget.index + 1;
 
-    // pictogramaFuture desde el modelo Word (si existe)
-    final Future<File?> pictogramFuture = currentWord.pictogramFile();
+    // `pictogramFuture` ya está inicializado en initState
 
     return Scaffold(
       appBar: AppBar(

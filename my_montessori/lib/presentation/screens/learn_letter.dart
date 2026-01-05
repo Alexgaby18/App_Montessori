@@ -24,7 +24,7 @@ class LearnLetterScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Learn Letter ${currentLetter.char}'),
+        title: Text('Aprende la letra ${currentLetter.char}'),
         backgroundColor: const Color.fromARGB(255, 68, 194, 193),
       ),
       body: Stack(

@@ -561,49 +561,51 @@ class _PracticeLetterScreenMLState extends State<PracticeLetterScreenML> {
           ),
           const SizedBox(height: 20),
           
-          // Botones de acción
+          // Botones de acción (solo iconos para niños)
           Row(
             children: [
               Expanded(
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.delete_outline),
-                  label: const Text('Borrar'),
+                child: ElevatedButton(
                   onPressed: _clearDrawing,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey[200],
                     foregroundColor: Colors.black87,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
+                  ),
+                  child: const Icon(
+                    Icons.delete_outline,
+                    size: 28,
                   ),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: ElevatedButton.icon(
-                  icon: _checking
+                child: ElevatedButton(
+                  onPressed: _checking || _strokes.isEmpty ? null : _onCheck,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 68, 194, 193),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: _checking
                       ? SizedBox(
-                          width: 20,
-                          height: 20,
+                          width: 24,
+                          height: 24,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             valueColor: AlwaysStoppedAnimation(Colors.white),
                           ),
                         )
-                      : const Icon(Icons.check_circle_outline),
-                  label: _checking
-                      ? const Text('Verificando...')
-                      : const Text('Verificar'),
-                  onPressed: _checking || _strokes.isEmpty ? null : _onCheck,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 68, 194, 193),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
+                      : const Icon(
+                          Icons.check_circle_outline,
+                          size: 28,
+                        ),
                 ),
               ),
             ],

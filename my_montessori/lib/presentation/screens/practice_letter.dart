@@ -23,13 +23,11 @@ class _PracticeLetterScreenState extends State<PracticeLetterScreen> {
         title: Text(
           _useMachineLearning
               ? (_mlStartIndex >= 0 && _mlStartIndex < letters.length
-                  ? 'Practicar letra ${letters[_mlStartIndex].char.toUpperCase()}'
+                  ? 'Practicar la letra ${letters[_mlStartIndex].char.toUpperCase()}'
                   : 'Practicar letras (ML)')
               : 'Practicar letras',
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         backgroundColor: const Color.fromARGB(255, 68, 194, 193),
-        centerTitle: true,
       ),
       body: Stack(
         children: [

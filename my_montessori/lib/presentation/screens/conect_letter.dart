@@ -156,19 +156,6 @@ class _ConnectLetterScreenState extends State<ConnectLetterScreen> {
         children: [
           const BackgroundAnimation(),
 
-          // boton volumen (instruccion)
-          Positioned(
-            right: 8,
-            top: 8,
-            child: IconButton(
-              icon: const Icon(Icons.volume_up),
-              iconSize: 44,
-              color: const Color.fromARGB(255, 55, 35, 28),
-              onPressed: () {
-                AudioService.instance.speak('Une las letras con los pictogramas correspondientes');
-              },
-            ),
-          ),
           SafeArea(
             child: LayoutBuilder(builder: (context, constraints) {
               final width = constraints.maxWidth;
@@ -326,6 +313,22 @@ class _ConnectLetterScreenState extends State<ConnectLetterScreen> {
               );
             }),
           ),
+
+          // boton volumen (instruccion) colocado al final para quedar encima del SafeArea
+          Positioned(
+            right: 8,
+            top: 8,
+            child: IconButton(
+              icon: const Icon(Icons.volume_up),
+              iconSize: 44,
+              color: const Color.fromARGB(255, 55, 35, 28),
+              onPressed: () {
+                print('ConnectLetter: volumen presionado');
+                AudioService.instance.speak('Une las letras con los pictogramas correspondientes');
+              },
+            ),
+          ),
+
         ],
       ),
     );

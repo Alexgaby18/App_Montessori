@@ -33,7 +33,17 @@ class AudioService {
     try {
       await _tts.stop();
       await _tts.speak(text);
-    } catch (_) {}
+    } catch (e) {
+      // Loguear para diagnóstico
+      print('AudioService.speak error (primero intento): $e');
+      // Intentar un fallback de idioma (algunos motores TTS esperan diferentes códigos)
+      try {
+        await _tts.setLanguage('es');
+        await _tts.speak(text);
+      } catch (e2) {
+        print('AudioService.speak error (fallback idioma): $e2');
+      }
+    }
   }
 
   /// Helper: habla la letra tal como viene (ej. 'M' -> TTS pronunciará la letra)
