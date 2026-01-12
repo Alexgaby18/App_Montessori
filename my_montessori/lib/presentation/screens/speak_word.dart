@@ -17,6 +17,7 @@ class SpeakWordScreen extends StatefulWidget {
 class _SpeakWordScreenState extends State<SpeakWordScreen> {
   late SpeakWordController _controller;
   late VoidCallback _controllerListener;
+  late Future<File?> _pictogramFuture;
 
   void _onAdvanceTo(int nextIndex) {
     if (!mounted) return;
@@ -37,6 +38,15 @@ class _SpeakWordScreenState extends State<SpeakWordScreen> {
     _controllerListener = () => setState(() {});
     _controller.addListener(_controllerListener);
     _controller.init();
+    _pictogramFuture = widget.word.pictogramFile();
+  }
+
+  @override
+  void didUpdateWidget(covariant SpeakWordScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.word.text != widget.word.text) {
+      _pictogramFuture = widget.word.pictogramFile();
+    }
   }
 
   void _startListening() => _controller.startListening();
@@ -52,7 +62,8 @@ class _SpeakWordScreenState extends State<SpeakWordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final Future<File?> pictogramFuture = widget.word.pictogramFile();
+    // Use cached future to avoid reloading pictogram on every setState
+    final Future<File?> pictogramFuture = _pictogramFuture;
 
     final int currentIndex = words.indexWhere((w) => w.text == widget.word.text);
     final bool hasPrev = currentIndex > 0;
