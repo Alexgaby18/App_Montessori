@@ -128,8 +128,6 @@ class _SelectionWordScreenState extends State<SelectionWordScreen> {
                     pictogramFuture: pictogramFuture,
                     size: 200.0,
                     onPressed: () async {
-                      // al tocar el pictograma, decir el nombre
-                      await AudioService.instance.speak(currentWord.text);
                     },
                     letters: currentWord.text.toUpperCase(),
                   ),

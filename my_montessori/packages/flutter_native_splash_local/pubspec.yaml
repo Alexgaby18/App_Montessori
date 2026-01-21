@@ -1,0 +1,11 @@
+name: flutter_native_splash
+description: "Local patched copy to fix Android namespace/package for build"
+version: 2.2.16
+environment:
+  sdk: ">=2.17.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+flutter: {}

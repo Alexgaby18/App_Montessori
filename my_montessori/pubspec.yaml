@@ -42,6 +42,8 @@ dependencies:
   flutter_svg: ^2.0.7
   path_provider: ^2.1.5
   http: ^1.6.0
+  flutter_launcher_icons: ^0.9.3
+  
 
 dev_dependencies:
   flutter_test:
@@ -53,6 +55,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+
+  flutter_native_splash: ^2.2.11
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -80,6 +84,7 @@ flutter:
     - assets/images/pictogram_menu/seleccionar.png
     - assets/images/pictogram_menu/unir.png
     - assets/images/pictogram_letters/c.png
+    - assets/images/fondo.png
     - assets/audio/letters_sounds/
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -113,3 +118,28 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+# Configuration for the native splash screen. Replace the image path
+# `assets/images/logo-1024.png` with the PNG you export from
+# `assets/svg/Logo.svg`. Color is a light blue matching the app logo.
+flutter_native_splash:
+  color: "#CBF3FF"
+  image: assets/images/Logo.png
+  android: true
+  ios: true
+  windows: true
+  macos: false
+  web: false
+  android_gravity: center
+  ios_content_mode: center
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/Logo.png"
+  adaptive_icon_background: "#FFAEDCEB" # o image
+  adaptive_icon_foreground: "assets/images/Logo.png"
+
+dependency_overrides:
+  flutter_native_splash:
+    path: packages/flutter_native_splash_local

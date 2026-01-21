@@ -299,7 +299,6 @@ class _ConnectLetterScreenState extends State<ConnectLetterScreen> {
                                   size: 100.0,
                                   letters: wordObj.text.toUpperCase(),
                                   onPressed: () async {
-                                    await AudioService.instance.speak(wordObj.text);
                                   },
                                 ),
                               );

@@ -145,7 +145,6 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
                     pictogramFuture: _letterObj.pictogramFile(_letterObj.words.first),
                     size: 180.0,
                     onPressed: () async {
-                      await AudioService.instance.speak(_word);
                     },
                     letters: _word,
                   ),

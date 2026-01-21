@@ -105,7 +105,8 @@ class _SpeakWordScreenState extends State<SpeakWordScreen> {
                   child: ButtonPictogramLetters(
                     pictogramFuture: pictogramFuture,
                     size: 200.0,
-                    onPressed: () => AudioService.instance.speak(widget.word.text),
+                    onPressed: () {
+                    },
                     letters: widget.word.text.toUpperCase(),
                   ),
                 ),
