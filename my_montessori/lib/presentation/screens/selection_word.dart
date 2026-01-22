@@ -10,10 +10,12 @@ import 'package:my_montessori/core/services/audio_service.dart';
 
 class SelectionWordScreen extends StatefulWidget {
   final int index; // índice de la palabra en la lista `words`
+  final bool initialIsUppercase;
 
   const SelectionWordScreen({
     Key? key,
     required this.index,
+    this.initialIsUppercase = true,
   }) : super(key: key);
 
   @override
@@ -26,11 +28,13 @@ class _SelectionWordScreenState extends State<SelectionWordScreen> {
   final _random = Random();
   bool _locked = false; // evita pulsaciones mientras se procesa
   late final Future<File?> pictogramFuture;
+  bool _isUppercase = true;
 
   @override
   void initState() {
     super.initState();
     currentWord = words[widget.index];
+    _isUppercase = widget.initialIsUppercase;
     _buildOptions();
     // Guardar el Future una sola vez para que no se recree en cada build
     pictogramFuture = currentWord.pictogramFile();
@@ -60,7 +64,7 @@ class _SelectionWordScreenState extends State<SelectionWordScreen> {
       try {
         await AudioService.instance.speak('¡Muy bien!');
         await Future.delayed(const Duration(milliseconds: 800));
-        await AudioService.instance.speak(currentWord.text); // repetir la palabra
+        await AudioService.instance.speak(_isUppercase ? currentWord.text : currentWord.text.toLowerCase()); // repetir la palabra
         // avanzar automáticamente después de una pausa corta
         await Future.delayed(const Duration(milliseconds: 600));
         final hasNext = widget.index < words.length - 1;
@@ -69,7 +73,7 @@ class _SelectionWordScreenState extends State<SelectionWordScreen> {
           if (!mounted) return;
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => SelectionWordScreen(index: nextIndex)),
+            MaterialPageRoute(builder: (_) => SelectionWordScreen(index: nextIndex, initialIsUppercase: _isUppercase)),
           );
         } else {
           await AudioService.instance.speak('¡Has completado todas las palabras!');
@@ -103,17 +107,29 @@ class _SelectionWordScreenState extends State<SelectionWordScreen> {
         children: [
           const BackgroundAnimation(),
 
-          // boton volumen (instruccion)
+          // boton volumen (instruccion) + Aa
           Positioned(
             right: 8,
             top: 8,
-            child: IconButton(
-              icon: const Icon(Icons.volume_up),
-              iconSize: 44,
-              color: const Color.fromARGB(255, 55, 35, 28),
-              onPressed: () {
-                AudioService.instance.speak('Selecciona la palabra ${currentWord.text}');
-              },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  iconSize: 44,
+                  color: const Color.fromARGB(255, 55, 35, 28),
+                  tooltip: _isUppercase ? 'Cambiar a minúsculas' : 'Cambiar a mayúsculas',
+                  onPressed: () => setState(() => _isUppercase = !_isUppercase),
+                  icon: Text('Aa', style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Color.fromARGB(255,55,35,28))),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.volume_up),
+                  iconSize: 44,
+                  color: const Color.fromARGB(255, 55, 35, 28),
+                  onPressed: () {
+                    AudioService.instance.speak('Selecciona la palabra ${_isUppercase ? currentWord.text.toUpperCase() : currentWord.text.toLowerCase()}');
+                  },
+                ),
+              ],
             ),
           ),
 
@@ -129,7 +145,7 @@ class _SelectionWordScreenState extends State<SelectionWordScreen> {
                     size: 200.0,
                     onPressed: () async {
                     },
-                    letters: currentWord.text.toUpperCase(),
+                    letters: _isUppercase ? currentWord.text.toUpperCase() : currentWord.text.toLowerCase(),
                   ),
                 ),
 
@@ -144,7 +160,7 @@ class _SelectionWordScreenState extends State<SelectionWordScreen> {
                           color: Color.fromARGB(255, 55, 35, 28),
                           onPressed: () => Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (_) => SelectionWordScreen(index: prevIndex)),
+                            MaterialPageRoute(builder: (_) => SelectionWordScreen(index: prevIndex, initialIsUppercase: _isUppercase)),
                           ),
                           icon: const Icon(Icons.arrow_back_ios),
                         )
@@ -155,7 +171,7 @@ class _SelectionWordScreenState extends State<SelectionWordScreen> {
                           color: Color.fromARGB(255, 55, 35, 28),
                           onPressed: () => Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (_) => SelectionWordScreen(index: nextIndex)),
+                            MaterialPageRoute(builder: (_) => SelectionWordScreen(index: nextIndex, initialIsUppercase: _isUppercase)),
                           ),
                           icon: const Icon(Icons.arrow_forward_ios),
                         )
@@ -174,12 +190,12 @@ class _SelectionWordScreenState extends State<SelectionWordScreen> {
                     children: options.map((opt) {
                       return Container(
                         margin: const EdgeInsets.only(bottom: 8),
-                        child: AbsorbPointer(
+                            child: AbsorbPointer(
                           absorbing: _locked, // bloquea la interacción cuando true
                           child: Opacity(
                             opacity: _locked ? 0.6 : 1.0, // atenua visualmente cuando bloqueado
                             child: ButtonWord(
-                              text: opt.text.toUpperCase(),
+                              text: _isUppercase ? opt.text.toUpperCase() : opt.text.toLowerCase(),
                               onPressed: () => _onOptionPressed(opt), // siempre no nulo
                             ),
                           ),

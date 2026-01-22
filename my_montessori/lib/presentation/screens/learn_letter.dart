@@ -6,21 +6,37 @@ import 'package:my_montessori/presentation/widgets/button_pictogram_letter.dart'
 import 'package:my_montessori/core/constans/list_pitogram.dart';
 import 'package:my_montessori/core/services/audio_service.dart';
 
-class LearnLetterScreen extends StatelessWidget {
+class LearnLetterScreen extends StatefulWidget {
   final int index; // index de la letra en la lista `letters`
+  final bool initialIsUppercase;
 
   const LearnLetterScreen({
     Key? key,
     required this.index,
+    this.initialIsUppercase = true,
   }) : super(key: key);
 
   @override
+  State<LearnLetterScreen> createState() => _LearnLetterScreenState();
+}
+
+class _LearnLetterScreenState extends State<LearnLetterScreen> {
+  bool isUppercase = true;
+
+  @override
+  void initState() {
+    super.initState();
+    isUppercase = widget.initialIsUppercase;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final currentLetter = letters[index];
-    final bool hasPrev = index > 0;
-    final bool hasNext = index < letters.length - 1;
-    final int prevIndex = index - 1;
-    final int nextIndex = index + 1;
+    final currentLetter = letters[widget.index];
+    final bool hasPrev = widget.index > 0;
+    final bool hasNext = widget.index < letters.length - 1;
+    final int prevIndex = widget.index - 1;
+    final int nextIndex = widget.index + 1;
+    String displayChar() => isUppercase ? currentLetter.char.toUpperCase() : currentLetter.char.toLowerCase();
 
     return Scaffold(
       appBar: AppBar(
@@ -35,13 +51,37 @@ class LearnLetterScreen extends StatelessWidget {
           Positioned(
             right: 8,
             top: 8,
-            child: IconButton(
-              icon: const Icon(Icons.volume_up),
-              iconSize: 44,
-              color: const Color.fromARGB(255, 55, 35, 28),
-              onPressed: () {
-                AudioService.instance.speak("Toca la letra ${currentLetter.char}");
-              },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Botón para alternar mayúsculas/minúsculas
+                IconButton(
+                  iconSize: 44,
+                  color: const Color.fromARGB(255, 55, 35, 28),
+                  tooltip: isUppercase ? 'Cambiar a minúsculas' : 'Cambiar a mayúsculas',
+                  onPressed: () => setState(() => isUppercase = !isUppercase),
+                  icon: Text(
+                    'Aa',
+                    style: TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                      color: const Color.fromARGB(255, 55, 35, 28),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(width: 6),
+
+                IconButton(
+                  icon: const Icon(Icons.volume_up),
+                  iconSize: 44,
+                  color: const Color.fromARGB(255, 55, 35, 28),
+                  tooltip: 'Reproducir sonido',
+                  onPressed: () {
+                    AudioService.instance.speak("Toca la letra ${displayChar()}");
+                  },
+                ),
+              ],
             ),
           ),
           SafeArea(
@@ -50,7 +90,7 @@ class LearnLetterScreen extends StatelessWidget {
                 const SizedBox(height: 100),
                 Center(
                   child: ButtonLetter(
-                    letter: currentLetter.char,
+                    letter: displayChar(),
                     onPressed: () {}, // por ejemplo reproducir sonido de la letra
                     size: 180.0,
                   ),
@@ -69,7 +109,7 @@ class LearnLetterScreen extends StatelessWidget {
                           color: Color.fromARGB(255, 55, 35, 28),
                           onPressed: () => Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (_) => LearnLetterScreen(index: prevIndex)),
+                            MaterialPageRoute(builder: (_) => LearnLetterScreen(index: prevIndex, initialIsUppercase: isUppercase)),
                           ),
                           icon: const Icon(Icons.arrow_back_ios),
                         )
@@ -80,7 +120,7 @@ class LearnLetterScreen extends StatelessWidget {
                           color: Color.fromARGB(255, 55, 35, 28),
                           onPressed: () => Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (_) => LearnLetterScreen(index: nextIndex)),
+                            MaterialPageRoute(builder: (_) => LearnLetterScreen(index: nextIndex, initialIsUppercase: isUppercase)),
                           ),
                           icon: const Icon(Icons.arrow_forward_ios),
                         )
@@ -101,11 +141,20 @@ class LearnLetterScreen extends StatelessWidget {
                       spacing: 30,
                       runSpacing: 30,
                       children: currentLetter.words.map((word) {
+                        final displayWord = isUppercase ? word.toUpperCase() : word.toLowerCase();
                         return ButtonPictogramLetters(
                           pictogramFuture: currentLetter.pictogramFile(word),
-                          letters: word.toUpperCase(),
+                          letters: displayWord,
                           onPressed: () {
-                            // acción al tocar un pictograma (ej. reproducir palabra)
+                            // Si está en minúsculas, avanzar a la siguiente letra manteniendo minúsculas
+                            if (!isUppercase && hasNext) {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (_) => LearnLetterScreen(index: nextIndex, initialIsUppercase: false)),
+                              );
+                              return;
+                            }
+                            // acción por defecto: reproducir palabra (implementa según tu servicio de audio)
                           },
                           size: 120,
                         );

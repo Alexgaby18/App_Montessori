@@ -10,14 +10,16 @@ import 'package:my_montessori/presentation/widgets/ink_painter.dart';
 class PracticeLetterScreenML extends StatefulWidget {
   final bool embedded;
   final int initialIndex; // nuevo índice inicial
+  final bool initialIsUppercase;
   final ValueChanged<int>? onIndexChanged;
-  const PracticeLetterScreenML({Key? key, this.embedded = false, this.initialIndex = 0, this.onIndexChanged}) : super(key: key);
+  const PracticeLetterScreenML({Key? key, this.embedded = false, this.initialIndex = 0, this.initialIsUppercase = true, this.onIndexChanged}) : super(key: key);
   @override
   State<PracticeLetterScreenML> createState() => _PracticeLetterScreenMLState();
 }
 
 class _PracticeLetterScreenMLState extends State<PracticeLetterScreenML> {
   int _index = 0;
+  bool _isUppercase = true;
   List<Offset> _currentPoints = [];
   List<List<Offset>> _strokes = [];
   bool _checking = false;
@@ -42,6 +44,7 @@ class _PracticeLetterScreenMLState extends State<PracticeLetterScreenML> {
   void initState() {
     super.initState();
     _index = widget.initialIndex.clamp(0, letters.isNotEmpty ? letters.length - 1 : 0);
+    _isUppercase = widget.initialIsUppercase;
     _initializeModel();
     if (letters.isEmpty) {
       _index = -1;
@@ -51,10 +54,21 @@ class _PracticeLetterScreenMLState extends State<PracticeLetterScreenML> {
       if (!mounted) return;
       if (_index >= 0 && _index < letters.length) {
         try {
-          AudioService.instance.speakLetter(letters[_index].char.toUpperCase());
+          AudioService.instance.speakLetter(_isUppercase ? letters[_index].char.toUpperCase() : letters[_index].char.toLowerCase());
         } catch (_) {}
       }
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant PracticeLetterScreenML oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialIsUppercase != widget.initialIsUppercase) {
+      setState(() => _isUppercase = widget.initialIsUppercase);
+    }
+    if (oldWidget.initialIndex != widget.initialIndex) {
+      setState(() => _index = widget.initialIndex.clamp(0, letters.isNotEmpty ? letters.length - 1 : 0));
+    }
   }
 
   Future<void> _initializeModel() async {
@@ -180,7 +194,7 @@ class _PracticeLetterScreenMLState extends State<PracticeLetterScreenML> {
       await Future.delayed(const Duration(milliseconds: 400));
 
       try {
-        await AudioService.instance.speakLetter(letters[_index].char.toUpperCase());
+        await AudioService.instance.speakLetter(_isUppercase ? letters[_index].char.toUpperCase() : letters[_index].char.toLowerCase());
       } catch (_) {}
     } else {
       final feedback = recognizedText != null
@@ -408,7 +422,9 @@ class _PracticeLetterScreenMLState extends State<PracticeLetterScreenML> {
   }
 
   Widget _buildCanvas(double width, double height) {
-    final targetLetter = _index >= 0 ? letters[_index].char.toUpperCase() : '?';
+    final targetLetter = _index >= 0
+      ? (_isUppercase ? letters[_index].char.toUpperCase() : letters[_index].char.toLowerCase())
+      : '?';
     
     return GestureDetector(
       onPanStart: (details) {
@@ -638,12 +654,19 @@ class _PracticeLetterScreenMLState extends State<PracticeLetterScreenML> {
         backgroundColor: const Color.fromARGB(255, 68, 194, 193),
         actions: [
           IconButton(
+            iconSize: 44,
+            color: const Color.fromARGB(255, 55, 35, 28),
+            tooltip: _isUppercase ? 'Cambiar a minúsculas' : 'Cambiar a mayúsculas',
+            onPressed: () => setState(() => _isUppercase = !_isUppercase),
+            icon: Text('Aa', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color.fromARGB(255,55,35,28))),
+          ),
+          IconButton(
             icon: const Icon(Icons.volume_up),
             onPressed: () async {
               try {
-                await AudioService.instance.speakLetter(currentLetter);
+                await AudioService.instance.speakLetter(_isUppercase ? currentLetter : currentLetter.toLowerCase());
                 await Future.delayed(const Duration(milliseconds: 300));
-                await AudioService.instance.speak('Practica trazando la letra $currentLetter');
+                await AudioService.instance.speak('Practica trazando la letra ${_isUppercase ? currentLetter : currentLetter.toLowerCase()}');
               } catch (_) {}
             },
           ),

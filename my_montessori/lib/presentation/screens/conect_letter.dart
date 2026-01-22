@@ -16,6 +16,7 @@ class ConnectLetterScreen extends StatefulWidget {
 
 class _ConnectLetterScreenState extends State<ConnectLetterScreen> {
   final _random = Random();
+  bool _isUppercase = true;
   
   // Cache de futures para evitar recargas
   final Map<int, Future<File?>> _pictogramFuturesCache = {};
@@ -193,7 +194,7 @@ class _ConnectLetterScreenState extends State<ConnectLetterScreen> {
                         final optPos = _leftOrder[i];
                         final wordIdx = _optionsIdx[optPos];
                         final wText = words[wordIdx].text;
-                        final letter = wText.substring(0, 1).toUpperCase();
+                        final letter = _isUppercase ? wText.substring(0, 1).toUpperCase() : wText.substring(0, 1).toLowerCase();
 
                         return Container(
                           key: _leftKeys[i],
@@ -297,7 +298,7 @@ class _ConnectLetterScreenState extends State<ConnectLetterScreen> {
                                 child: ButtonPictogramLetters(
                                   pictogramFuture: pictogramFuture,
                                   size: 100.0,
-                                  letters: wordObj.text.toUpperCase(),
+                                  letters: _isUppercase ? wordObj.text.toUpperCase() : wordObj.text.toLowerCase(),
                                   onPressed: () async {
                                   },
                                 ),
@@ -317,14 +318,26 @@ class _ConnectLetterScreenState extends State<ConnectLetterScreen> {
           Positioned(
             right: 8,
             top: 8,
-            child: IconButton(
-              icon: const Icon(Icons.volume_up),
-              iconSize: 44,
-              color: const Color.fromARGB(255, 55, 35, 28),
-              onPressed: () {
-                print('ConnectLetter: volumen presionado');
-                AudioService.instance.speak('Une las letras con los pictogramas correspondientes');
-              },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  iconSize: 44,
+                  color: const Color.fromARGB(255, 55, 35, 28),
+                  tooltip: _isUppercase ? 'Cambiar a minúsculas' : 'Cambiar a mayúsculas',
+                  onPressed: () => setState(() => _isUppercase = !_isUppercase),
+                  icon: Text('Aa', style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Color.fromARGB(255,55,35,28))),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.volume_up),
+                  iconSize: 44,
+                  color: const Color.fromARGB(255, 55, 35, 28),
+                  onPressed: () {
+                    print('ConnectLetter: volumen presionado');
+                    AudioService.instance.speak('Une las letras con los pictogramas correspondientes');
+                  },
+                ),
+              ],
             ),
           ),
 

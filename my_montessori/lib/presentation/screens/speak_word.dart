@@ -8,7 +8,8 @@ import 'package:my_montessori/presentation/controllers/speak_word_controller.dar
 
 class SpeakWordScreen extends StatefulWidget {
   final Word word;
-  const SpeakWordScreen({Key? key, required this.word}) : super(key: key);
+  final bool initialIsUppercase;
+  const SpeakWordScreen({Key? key, required this.word, this.initialIsUppercase = true}) : super(key: key);
 
   @override
   State<SpeakWordScreen> createState() => _SpeakWordScreenState();
@@ -18,12 +19,13 @@ class _SpeakWordScreenState extends State<SpeakWordScreen> {
   late SpeakWordController _controller;
   late VoidCallback _controllerListener;
   late Future<File?> _pictogramFuture;
+  bool _isUppercase = true;
 
   void _onAdvanceTo(int nextIndex) {
     if (!mounted) return;
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => SpeakWordScreen(word: words[nextIndex])),
+      MaterialPageRoute(builder: (_) => SpeakWordScreen(word: words[nextIndex], initialIsUppercase: _isUppercase)),
     );
   }
 
@@ -39,6 +41,7 @@ class _SpeakWordScreenState extends State<SpeakWordScreen> {
     _controller.addListener(_controllerListener);
     _controller.init();
     _pictogramFuture = widget.word.pictogramFile();
+    _isUppercase = widget.initialIsUppercase;
   }
 
   @override
@@ -83,17 +86,29 @@ class _SpeakWordScreenState extends State<SpeakWordScreen> {
       body: Stack(
         children: [
           const BackgroundAnimation(),
-          // boton volumen (instruccion)
+          // boton volumen (instruccion) + Aa
           Positioned(
             right: 8,
             top: 8,
-            child: IconButton(
-              icon: const Icon(Icons.volume_up),
-              iconSize: 44,
-              color: const Color.fromARGB(255, 55, 35, 28),
-              onPressed: () {
-                AudioService.instance.speak('Lee la palabra ${widget.word.text}');
-              },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  iconSize: 44,
+                  color: const Color.fromARGB(255, 55, 35, 28),
+                  tooltip: _isUppercase ? 'Cambiar a minúsculas' : 'Cambiar a mayúsculas',
+                  onPressed: () => setState(() => _isUppercase = !_isUppercase),
+                  icon: Text('Aa', style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Color.fromARGB(255,55,35,28))),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.volume_up),
+                  iconSize: 44,
+                  color: const Color.fromARGB(255, 55, 35, 28),
+                  onPressed: () {
+                    AudioService.instance.speak('Lee la palabra ${_isUppercase ? widget.word.text.toUpperCase() : widget.word.text.toLowerCase()}');
+                  },
+                ),
+              ],
             ),
           ),
           SafeArea(
@@ -105,10 +120,10 @@ class _SpeakWordScreenState extends State<SpeakWordScreen> {
                   child: ButtonPictogramLetters(
                     pictogramFuture: pictogramFuture,
                     size: 200.0,
-                    onPressed: () {
+                    onPressed: () async {
                     },
                     isListening: _controller.listening,
-                    letters: widget.word.text.toUpperCase(),
+                    letters: _isUppercase ? widget.word.text.toUpperCase() : widget.word.text.toLowerCase(),
                   ),
                 ),
                 const SizedBox(height: 24),

@@ -13,12 +13,14 @@ class CompleteLetterScreen extends StatefulWidget {
   final int index; // índice en la lista `letters`
   final String word; // opcional: palabra objetivo (si no viene, usamos first)
   final int? targetIndex; // posición a completar (opcional)
+  final bool initialIsUppercase;
 
   const CompleteLetterScreen({
     Key? key,
     required this.index,
     this.word = '',
     this.targetIndex,
+    this.initialIsUppercase = true,
   }) : super(key: key);
 
   @override
@@ -31,6 +33,7 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
   late final int _targetIndex; // posición que el alumno debe completar
   late List<String?> _slots;
   late List<String> _pool; // letras disponibles (shuffled)
+  bool _isUppercase = true;
   final _random = Random();
 
   @override
@@ -38,6 +41,7 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
     super.initState();
     _letterObj = letters[widget.index];
     _word = (widget.word.isNotEmpty ? widget.word : _letterObj.words.first).toUpperCase();
+    _isUppercase = widget.initialIsUppercase;
 
     // Intentar usar la posición de la letra que estamos enseñando dentro de la palabra.
     // Ej: letra = 'X', palabra = 'TAXI' -> targetIndex = 2
@@ -94,7 +98,7 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => CompleteLetterScreen(index: nextIndex)),
+        MaterialPageRoute(builder: (_) => CompleteLetterScreen(index: nextIndex, initialIsUppercase: _isUppercase)),
       );
     } else {
       // fin de la lista: feedback final
@@ -121,17 +125,29 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
       body: Stack(
         children: [
           const BackgroundAnimation(),
-          // icono volumen (a la derecha)
+          // icono volumen (a la derecha) + Aa
           Positioned(
             right: 8,
             top: 8,
-            child: IconButton(
-              icon: const Icon(Icons.volume_up),
-              iconSize: 44,
-              color: const Color.fromARGB(255, 55, 35, 28),
-              onPressed: () {
-                AudioService.instance.speak("Completa la palabra con  la letra ${_letterObj.char}");
-              },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  iconSize: 44,
+                  color: const Color.fromARGB(255, 55, 35, 28),
+                  tooltip: _isUppercase ? 'Cambiar a minúsculas' : 'Cambiar a mayúsculas',
+                  onPressed: () => setState(() => _isUppercase = !_isUppercase),
+                  icon: Text('Aa', style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Color.fromARGB(255,55,35,28))),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.volume_up),
+                  iconSize: 44,
+                  color: const Color.fromARGB(255, 55, 35, 28),
+                  onPressed: () {
+                    AudioService.instance.speak("Completa la palabra con  la letra ${_letterObj.char}");
+                  },
+                ),
+              ],
             ),
           ),
           SafeArea(
@@ -146,7 +162,7 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
                     size: 180.0,
                     onPressed: () async {
                     },
-                    letters: _word,
+                    letters: _isUppercase ? _word : _word.toLowerCase(),
                   ),
                 ),
                 // navegación opcional abajo
@@ -160,7 +176,7 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
                           color: Color.fromARGB(255, 55, 35, 28),
                           onPressed: () => Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (_) => CompleteLetterScreen(index: prevIndex)),
+                            MaterialPageRoute(builder: (_) => CompleteLetterScreen(index: prevIndex, initialIsUppercase: _isUppercase)),
                           ),
                           icon: const Icon(Icons.arrow_back_ios),
                         )
@@ -171,7 +187,7 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
                           color: Color.fromARGB(255, 55, 35, 28),
                           onPressed: () => Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (_) => CompleteLetterScreen(index: nextIndex)),
+                            MaterialPageRoute(builder: (_) => CompleteLetterScreen(index: nextIndex, initialIsUppercase: _isUppercase)),
                           ),
                           icon: const Icon(Icons.arrow_forward_ios),
                         )
@@ -236,7 +252,7 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
         ),
         child: Center(
           child: Text(
-            _word[index],
+            _isUppercase ? _word[index] : _word[index].toLowerCase(),
             style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
           ),
         ),
@@ -247,7 +263,7 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
     return DragTarget<String>(
       onWillAccept: (data) => data != null,
       onAccept: (data) async {
-        if (data == _word[_targetIndex]) {
+        if (data.toUpperCase() == _word[_targetIndex]) {
           setState(() {
             _slots[_targetIndex] = data;
             final removed = _pool.indexOf(data);
@@ -255,7 +271,7 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
           });
 
           // decir el nombre de la letra (usa speakLetter) y luego repetir la palabra y avanzar
-          await AudioService.instance.speakLetter(_slots[_targetIndex]!);
+          await AudioService.instance.speakLetter(_isUppercase ? _slots[_targetIndex]! : _slots[_targetIndex]!.toLowerCase());
           await _onCorrectComplete();
         } else {
           // feedback de error breve
@@ -263,6 +279,7 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
         }
       },
       builder: (context, candidateData, rejectedData) {
+        final display = content == null ? '' : (_isUppercase ? content! : content!.toLowerCase());
         return Container(
           width: 54,
           height: 54,
@@ -274,7 +291,7 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
           ),
           child: Center(
             child: Text(
-              content ?? '',
+                display,
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
             ),
           ),
@@ -284,13 +301,14 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
   }
 
   Widget _buildDraggableTile(String letter) {
+    final displayLetter = _isUppercase ? letter : letter.toLowerCase();
     final tile = SizedBox(
       width: 64,
       height: 64,
       child: ButtonLetter(
-        letter: letter,
+        letter: displayLetter,
         // tocar tile solo pronuncia la letra (no cambia estado)
-        onPressed: () => AudioService.instance.speakLetter(letter),
+        onPressed: (){} ,
         size: 64,
       ),
     );

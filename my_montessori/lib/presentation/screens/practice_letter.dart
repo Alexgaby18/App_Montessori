@@ -15,6 +15,7 @@ class PracticeLetterScreen extends StatefulWidget {
 class _PracticeLetterScreenState extends State<PracticeLetterScreen> {
   bool _useMachineLearning = true;
   int _mlStartIndex = 0;
+  bool isUppercase = true;
 
   @override
   Widget build(BuildContext context) {
@@ -49,11 +50,18 @@ class _PracticeLetterScreenState extends State<PracticeLetterScreen> {
                       IconButton(
                         iconSize: 44,
                         color: const Color.fromARGB(255, 55, 35, 28),
+                        tooltip: isUppercase ? 'Cambiar a minúsculas' : 'Cambiar a mayúsculas',
+                        onPressed: () => setState(() => isUppercase = !isUppercase),
+                        icon: Text('Aa', style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Color.fromARGB(255,55,35,28))),
+                      ),
+                      IconButton(
+                        iconSize: 44,
+                        color: const Color.fromARGB(255, 55, 35, 28),
                         icon: const Icon(Icons.volume_up),
                         onPressed: () {
                           AudioService.instance.speak(
                             _useMachineLearning
-                                ? 'Practica trazando la letra ${letters[_mlStartIndex].char.toUpperCase()}'
+                                ? 'Practica trazando la letra ${isUppercase ? letters[_mlStartIndex].char.toUpperCase() : letters[_mlStartIndex].char.toLowerCase()}'
                                 : 'Selecciona una letra para practicar',
                           );
                         },
@@ -66,6 +74,7 @@ class _PracticeLetterScreenState extends State<PracticeLetterScreen> {
                       ? PracticeLetterScreenML(
                               embedded: true,
                               initialIndex: _mlStartIndex,
+                              initialIsUppercase: isUppercase,
                               onIndexChanged: (newIndex) => setState(() => _mlStartIndex = newIndex),
                             )
                       : Padding(
@@ -85,8 +94,9 @@ class _PracticeLetterScreenState extends State<PracticeLetterScreen> {
                                   itemCount: letters.length,
                                   itemBuilder: (context, index) {
                                     final letter = letters[index];
+                                    final displayLetter = isUppercase ? letter.char : letter.char.toLowerCase();
                                     return ButtonLetter(
-                                      letter: letter.char,
+                                      letter: displayLetter,
                                       onPressed: () {
                                         setState(() {
                                           _mlStartIndex = index;
