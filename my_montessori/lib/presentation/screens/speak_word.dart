@@ -107,6 +107,7 @@ class _SpeakWordScreenState extends State<SpeakWordScreen> {
                     size: 200.0,
                     onPressed: () {
                     },
+                    isListening: _controller.listening,
                     letters: widget.word.text.toUpperCase(),
                   ),
                 ),

@@ -13,12 +13,14 @@ class ButtonPictogramLetters extends StatelessWidget {
   final Color shadowColor;
   final double borderRadius;
   final String letters;
+  final bool isListening;
 
   const ButtonPictogramLetters({
     Key? key,
     required this.pictogramFuture,
     this.size = 64.0,
     required this.onPressed,
+    this.isListening = false,
     this.backgroundColor = Colors.white,
     this.borderColor = const Color(0xFFB7C2D7),
     this.borderWidth = 1.5,
@@ -43,8 +45,10 @@ class ButtonPictogramLetters extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: GestureDetector(
           onTap: () async {
-            // habla el nombre del pictograma (letters contiene la palabra)
-            await AudioService.instance.speak(letters);
+            // No hablar si se está escuchando (evita hacer trampa en reconocimiento)
+            if (!isListening) {
+              await AudioService.instance.speak(letters);
+            }
             onPressed();
           },
           child: Center(
