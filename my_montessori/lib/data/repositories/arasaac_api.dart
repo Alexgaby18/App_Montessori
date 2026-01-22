@@ -42,7 +42,7 @@ class ArasaacApi {
       final pictogramId = pictogramas[0]["_id"];
       if (pictogramId == null) return null;
 
-      final imageUrl = Uri.parse("https://api.arasaac.org/v1/pictograms/$pictogramId?download=false");
+      final imageUrl = Uri.parse("https://api.arasaac.org/v1/pictograms/$pictogramId?download=true");
       final imageResponse = await http.get(imageUrl);
       if (imageResponse.statusCode != 200) return null;
 
