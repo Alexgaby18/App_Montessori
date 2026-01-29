@@ -42,27 +42,33 @@ class ButtonPictogram extends StatelessWidget {
 
       final padding = effectiveSize * 0.08;
 
-      return SizedBox(
-        width: effectiveSize,
-        height: effectiveSize,
+      // Hacer que el área completa disponible sea pulsable (útil en tablets)
+      return SizedBox.expand(
         child: Material(
-          color: backgroundColor,
-          elevation: elevation,
-          shadowColor: shadowColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius),
-            side: BorderSide(color: borderColor, width: borderWidth),
-          ),
-          clipBehavior: Clip.antiAlias,
+          color: Colors.transparent,
           child: InkWell(
             borderRadius: BorderRadius.circular(borderRadius),
             onTap: onPressed,
-            child: Padding(
-              padding: EdgeInsets.all(padding),
-              child: SizedBox.expand(
-                child: FittedBox(
-                  fit: BoxFit.contain,
-                  child: Image.asset(assetPath),
+            child: Center(
+              child: SizedBox(
+                width: effectiveSize,
+                height: effectiveSize,
+                child: Material(
+                  color: backgroundColor,
+                  elevation: elevation,
+                  shadowColor: shadowColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(borderRadius),
+                    side: BorderSide(color: borderColor, width: borderWidth),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: Padding(
+                    padding: EdgeInsets.all(padding),
+                    child: FittedBox(
+                      fit: BoxFit.contain,
+                      child: Image.asset(assetPath),
+                    ),
+                  ),
                 ),
               ),
             ),

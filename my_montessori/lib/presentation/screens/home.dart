@@ -46,12 +46,9 @@ class Home extends StatelessWidget {
                         final screenWidth = MediaQuery.of(context).size.width;
                         final isTablet = screenWidth > 600; // threshold ajustable
                         final horizontalPadding = isTablet ? 100.0 : 40.0;
-                        final spacing = isTablet ? 80.0 : 25.0;
+                        final spacing = isTablet ? 80.0 : 40.0;
                         final columns = 2;
-
-                        final availableWidth = screenWidth - horizontalPadding * 2 - spacing * (columns - 1);
-                        final itemWidth = availableWidth / columns;
-                        final buttonSize = itemWidth * (isTablet ? 0.92 : 0.82);
+                        final buttonSize = isTablet ? 220.0 : 120.0;
 
                         return GridView.count(
                           crossAxisCount: columns,

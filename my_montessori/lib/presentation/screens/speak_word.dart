@@ -76,6 +76,10 @@ class _SpeakWordScreenState extends State<SpeakWordScreen> {
 
     final bool correct = _controller.isLastResultCorrect;
     final bool wrong = _controller.isLastResultWrong;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600; // threshold ajustable
+    final sizePictogram = isTablet ? 280.0 : 220.0;
+    final sizeIcon = isTablet ? 48.0 : 24.0;
 
     return Scaffold(
       appBar: AppBar(
@@ -119,7 +123,7 @@ class _SpeakWordScreenState extends State<SpeakWordScreen> {
                 Center(
                   child: ButtonPictogramLetters(
                     pictogramFuture: pictogramFuture,
-                    size: 200.0,
+                    size: sizePictogram,
                     onPressed: () async {
                     },
                     isListening: _controller.listening,
@@ -140,7 +144,7 @@ class _SpeakWordScreenState extends State<SpeakWordScreen> {
                             context,
                             MaterialPageRoute(builder: (_) => SpeakWordScreen(word: words[prevIndex])),
                           ),
-                          icon: const Icon(Icons.arrow_back_ios),
+                          icon:  Icon(Icons.arrow_back_ios, size: sizeIcon),
                         )
                       else
                         const SizedBox(width: 48),
@@ -151,7 +155,7 @@ class _SpeakWordScreenState extends State<SpeakWordScreen> {
                             context,
                             MaterialPageRoute(builder: (_) => SpeakWordScreen(word: words[nextIndex])),
                           ),
-                          icon: const Icon(Icons.arrow_forward_ios),
+                          icon:  Icon(Icons.arrow_forward_ios, size: sizeIcon),
                         )
                       else
                         const SizedBox(width: 48),
@@ -172,9 +176,9 @@ class _SpeakWordScreenState extends State<SpeakWordScreen> {
                       ),
                       const SizedBox(height: 8),
                       if (correct)
-                        const Icon(Icons.check_circle, color: Colors.green, size: 48)
+                         Icon(Icons.check_circle, color: Colors.green, size: isTablet ? 64 : 48)
                       else if (wrong)
-                        const Icon(Icons.cancel, color: Colors.red, size: 48),
+                         Icon(Icons.cancel, color: Colors.red, size: isTablet ? 64 : 48),
                     ],
                   ),
 
@@ -191,8 +195,8 @@ class _SpeakWordScreenState extends State<SpeakWordScreen> {
                       }
                     },
                     child: Container(
-                      width: 96,
-                      height: 96,
+                      width: isTablet ? 140 : 96,
+                      height: isTablet ? 140 : 96,
                       decoration: BoxDecoration(
                         color: _controller.listening ? const Color.fromARGB(255, 76, 175, 80) : const Color.fromARGB(255, 33, 150, 243),
                         shape: BoxShape.circle,
@@ -208,7 +212,7 @@ class _SpeakWordScreenState extends State<SpeakWordScreen> {
                         child: Icon(
                           _controller.listening ? Icons.mic : Icons.mic_none,
                           color: Colors.white,
-                          size: 44,
+                          size: isTablet ? 68 : 44,
                         ),
                       ),
                     ),

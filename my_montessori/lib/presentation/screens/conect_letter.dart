@@ -139,6 +139,9 @@ class _ConnectLetterScreenState extends State<ConnectLetterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600; // threshold ajustable
+    final sizePictogram = isTablet ? 140.0 : 100.0;
     if (words.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: const Text('Relaciona letras y pictogramas')),
@@ -226,12 +229,12 @@ class _ConnectLetterScreenState extends State<ConnectLetterScreen> {
                               child: Opacity(
                                 opacity: 0.95,
                                 child: SizedBox(
-                                  width: 64, 
-                                  height: 64, 
+                                  width: sizePictogram, 
+                                  height: sizePictogram, 
                                   child: ButtonLetter(
                                     letter: letter, 
                                     onPressed: () {}, 
-                                    size: 64
+                                    size: sizePictogram
                                   )
                                 ),
                               ),
@@ -241,7 +244,7 @@ class _ConnectLetterScreenState extends State<ConnectLetterScreen> {
                               child: ButtonLetter(
                                 letter: letter, 
                                 onPressed: () {}, 
-                                size: 64
+                                size: sizePictogram
                               )
                             ),
                             child: GestureDetector(
@@ -250,7 +253,7 @@ class _ConnectLetterScreenState extends State<ConnectLetterScreen> {
                                 await Future.delayed(const Duration(milliseconds: 150));
                                 await AudioService.instance.speak(wText);
                               },
-                              child: ButtonLetter(letter: letter, onPressed: () {}, size: 100),
+                              child: ButtonLetter(letter: letter, onPressed: () {}, size: sizePictogram),
                             ),
                           ),
                         );
@@ -297,7 +300,7 @@ class _ConnectLetterScreenState extends State<ConnectLetterScreen> {
                                 opacity: isConnected ? 0.9 : 1.0,
                                 child: ButtonPictogramLetters(
                                   pictogramFuture: pictogramFuture,
-                                  size: 100.0,
+                                  size: sizePictogram,
                                   letters: _isUppercase ? wordObj.text.toUpperCase() : wordObj.text.toLowerCase(),
                                   onPressed: () async {
                                   },
