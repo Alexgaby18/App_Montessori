@@ -94,7 +94,10 @@ class _SelectionWordScreenState extends State<SelectionWordScreen> {
     final bool hasNext = widget.index < words.length - 1;
     final int prevIndex = widget.index - 1;
     final int nextIndex = widget.index + 1;
-
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600; // threshold ajustable
+    final sizePictogram = isTablet ? 280.0 : 220.0;
+    final sizeIcon = isTablet ? 48.0 : 24.0;
     // `pictogramFuture` ya está inicializado en initState
 
     return Scaffold(
@@ -142,7 +145,7 @@ class _SelectionWordScreenState extends State<SelectionWordScreen> {
                 Center(
                   child: ButtonPictogramLetters(
                     pictogramFuture: pictogramFuture,
-                    size: 200.0,
+                    size: sizePictogram,
                     onPressed: () async {
                     },
                     letters: _isUppercase ? currentWord.text.toUpperCase() : currentWord.text.toLowerCase(),
@@ -162,7 +165,7 @@ class _SelectionWordScreenState extends State<SelectionWordScreen> {
                             context,
                             MaterialPageRoute(builder: (_) => SelectionWordScreen(index: prevIndex, initialIsUppercase: _isUppercase)),
                           ),
-                          icon: const Icon(Icons.arrow_back_ios),
+                          icon:  Icon(Icons.arrow_back_ios, size: sizeIcon),
                         )
                       else
                         const SizedBox(width: 48),
@@ -173,7 +176,7 @@ class _SelectionWordScreenState extends State<SelectionWordScreen> {
                             context,
                             MaterialPageRoute(builder: (_) => SelectionWordScreen(index: nextIndex, initialIsUppercase: _isUppercase)),
                           ),
-                          icon: const Icon(Icons.arrow_forward_ios),
+                          icon:  Icon(Icons.arrow_forward_ios, size: sizeIcon),
                         )
                       else
                         const SizedBox(width: 48),

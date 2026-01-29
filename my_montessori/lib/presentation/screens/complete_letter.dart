@@ -114,6 +114,10 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
     final hasNext = widget.index < letters.length - 1;
     final prevIndex = (widget.index - 1).clamp(0, letters.length - 1);
     final nextIndex = (widget.index + 1).clamp(0, letters.length - 1);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600; // threshold ajustable
+    final sizePictogram = isTablet ? 280.0 : 120.0;
+    final sizeIcon = isTablet ? 48.0 : 24.0;
 
     final Future mainPictogramFuture = _letterObj.pictogramFile(_letterObj.words.first);
 
@@ -159,7 +163,7 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
                 Center(
                   child: ButtonPictogramLetters(
                     pictogramFuture: _letterObj.pictogramFile(_letterObj.words.first),
-                    size: 180.0,
+                    size: sizePictogram,
                     onPressed: () async {
                     },
                     letters: _isUppercase ? _word : _word.toLowerCase(),
@@ -178,7 +182,7 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
                             context,
                             MaterialPageRoute(builder: (_) => CompleteLetterScreen(index: prevIndex, initialIsUppercase: _isUppercase)),
                           ),
-                          icon: const Icon(Icons.arrow_back_ios),
+                          icon:  Icon(Icons.arrow_back_ios, size: sizeIcon),
                         )
                       else
                         const SizedBox(width: 48),
@@ -189,7 +193,7 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
                             context,
                             MaterialPageRoute(builder: (_) => CompleteLetterScreen(index: nextIndex, initialIsUppercase: _isUppercase)),
                           ),
-                          icon: const Icon(Icons.arrow_forward_ios),
+                          icon:  Icon(Icons.arrow_forward_ios, size: sizeIcon),
                         )
                       else
                         const SizedBox(width: 48),
@@ -239,11 +243,14 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
 
   Widget _buildSlot(int index) {
     final content = _slots[index];
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600; // threshold ajustable
+    final sizeButtonLetter = isTablet ? 80.0 : 54.0;
     // Si no es la posición objetivo, mostramos la letra fija del _word
     if (index != _targetIndex) {
       return Container(
-        width: 54,
-        height: 54,
+        width: sizeButtonLetter,
+        height: sizeButtonLetter,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8),
@@ -253,7 +260,7 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
         child: Center(
           child: Text(
             _isUppercase ? _word[index] : _word[index].toLowerCase(),
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
+            style: TextStyle(fontSize: sizeButtonLetter * 0.55, fontWeight: FontWeight.bold, color: Colors.black87),
           ),
         ),
       );
@@ -281,8 +288,8 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
       builder: (context, candidateData, rejectedData) {
         final display = content == null ? '' : (_isUppercase ? content! : content!.toLowerCase());
         return Container(
-          width: 54,
-          height: 54,
+          width: sizeButtonLetter,
+          height: sizeButtonLetter,
           decoration: BoxDecoration(
             color: content == null ? Colors.white : const Color(0xFFFAFAFA),
             borderRadius: BorderRadius.circular(8),
@@ -292,7 +299,7 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
           child: Center(
             child: Text(
                 display,
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
+              style: TextStyle(fontSize: sizeButtonLetter * 0.55, fontWeight: FontWeight.bold, color: Colors.black87),
             ),
           ),
         );
@@ -301,15 +308,18 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
   }
 
   Widget _buildDraggableTile(String letter) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600; // threshold ajustable
+    final sizeButtonLetter = isTablet ? 100.0 : 64.0;
     final displayLetter = _isUppercase ? letter : letter.toLowerCase();
     final tile = SizedBox(
-      width: 64,
-      height: 64,
+      width: sizeButtonLetter,
+      height: sizeButtonLetter,
       child: ButtonLetter(
         letter: displayLetter,
         // tocar tile solo pronuncia la letra (no cambia estado)
         onPressed: (){} ,
-        size: 64,
+        size: sizeButtonLetter,
       ),
     );
 
@@ -317,7 +327,7 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
       data: letter,
       feedback: Material(
         color: Colors.transparent,
-        child: Opacity(opacity: 0.95, child: SizedBox(width: 64, height: 64, child: tile)),
+        child: Opacity(opacity: 0.95, child: SizedBox(width: sizeButtonLetter, height: sizeButtonLetter, child: tile)),
       ),
       childWhenDragging: Opacity(opacity: 0.25, child: tile),
       child: tile,

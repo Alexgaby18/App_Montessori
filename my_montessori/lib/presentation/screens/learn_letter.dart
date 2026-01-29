@@ -36,6 +36,11 @@ class _LearnLetterScreenState extends State<LearnLetterScreen> {
     final bool hasNext = widget.index < letters.length - 1;
     final int prevIndex = widget.index - 1;
     final int nextIndex = widget.index + 1;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600; // threshold ajustable
+    final sizeButtonLetter = isTablet ? 280.0 : 180.0;
+    final sizePictogram = isTablet ? 220.0 : 120.0;
+    final sizeIcon = isTablet ? 48.0 : 24.0;
     String displayChar() => isUppercase ? currentLetter.char.toUpperCase() : currentLetter.char.toLowerCase();
 
     return Scaffold(
@@ -92,7 +97,7 @@ class _LearnLetterScreenState extends State<LearnLetterScreen> {
                   child: ButtonLetter(
                     letter: displayChar(),
                     onPressed: () {}, // por ejemplo reproducir sonido de la letra
-                    size: 180.0,
+                    size: sizeButtonLetter,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -111,7 +116,7 @@ class _LearnLetterScreenState extends State<LearnLetterScreen> {
                             context,
                             MaterialPageRoute(builder: (_) => LearnLetterScreen(index: prevIndex, initialIsUppercase: isUppercase)),
                           ),
-                          icon: const Icon(Icons.arrow_back_ios),
+                          icon: Icon(Icons.arrow_back_ios, size: sizeIcon),
                         )
                       else
                         const SizedBox(width: 48),
@@ -122,7 +127,7 @@ class _LearnLetterScreenState extends State<LearnLetterScreen> {
                             context,
                             MaterialPageRoute(builder: (_) => LearnLetterScreen(index: nextIndex, initialIsUppercase: isUppercase)),
                           ),
-                          icon: const Icon(Icons.arrow_forward_ios),
+                          icon:  Icon(Icons.arrow_forward_ios, size: sizeIcon),
                         )
                       else
                         const SizedBox(width: 48),
@@ -138,8 +143,8 @@ class _LearnLetterScreenState extends State<LearnLetterScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Wrap(
                       alignment: WrapAlignment.center,
-                      spacing: 30,
-                      runSpacing: 30,
+                      spacing: isTablet ? 60 : 30,
+                      runSpacing: isTablet ? 60 : 30,
                       children: currentLetter.words.map((word) {
                         final displayWord = isUppercase ? word.toUpperCase() : word.toLowerCase();
                         return ButtonPictogramLetters(
@@ -156,7 +161,7 @@ class _LearnLetterScreenState extends State<LearnLetterScreen> {
                             }
                             // acción por defecto: reproducir palabra (implementa según tu servicio de audio)
                           },
-                          size: 120,
+                          size: sizePictogram,
                         );
                       }).toList(),
                     ),
