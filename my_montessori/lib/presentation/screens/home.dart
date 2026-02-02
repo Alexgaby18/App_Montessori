@@ -2,14 +2,8 @@ import 'dart:developer' as console;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:my_montessori/core/theme/animatic_background.dart';
-import 'package:my_montessori/presentation/screens/practice_letter.dart';
-import 'package:my_montessori/presentation/screens/speak_word.dart';
 import 'package:my_montessori/presentation/widgets/button_pictogram.dart';
-import 'package:my_montessori/presentation/screens/learn_letter.dart';
-import 'package:my_montessori/core/constans/list_pitogram.dart';
-import 'package:my_montessori/presentation/screens/complete_letter.dart';
-import 'package:my_montessori/presentation/screens/selection_word.dart';
-import 'package:my_montessori/presentation/screens/conect_letter.dart';
+import 'package:my_montessori/presentation/screens/level_selection.dart';
 
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
@@ -63,8 +57,7 @@ class Home extends StatelessWidget {
                               backgroundColor: const Color.fromARGB(255, 68, 194, 193),
                               onPressed: () {
                                 console.log('Aprender Pressed');
-                                final idx = letters.indexWhere((l) => l.char == 'A');
-                                Navigator.push(context, MaterialPageRoute(builder: (_) => LearnLetterScreen(index: idx)));
+                                Navigator.push(context, MaterialPageRoute(builder: (_) => LevelSelectionScreen(activityId: 'learn_letter', assetPath: 'assets/images/pictogram_menu/aprender.png')));
                               },
                             ),
                             ButtonPictogram(
@@ -73,8 +66,7 @@ class Home extends StatelessWidget {
                               backgroundColor: const Color.fromARGB(255, 66, 170, 223),
                               onPressed: () {
                                 console.log('Completar Pressed');
-                                final idx = letters.indexWhere((l) => l.char == 'A');
-                                Navigator.push(context, MaterialPageRoute(builder: (_) => CompleteLetterScreen(index: idx)));
+                                Navigator.push(context, MaterialPageRoute(builder: (_) => LevelSelectionScreen(activityId: 'complete_letter', assetPath: 'assets/images/pictogram_menu/completar.png')));
                               },
                             ),
                             ButtonPictogram(
@@ -83,8 +75,7 @@ class Home extends StatelessWidget {
                               backgroundColor: const Color.fromARGB(255, 245, 163, 35),
                               onPressed: () {
                                 console.log('Unir Pressed');
-                                final idx = letters.indexWhere((l) => l.char == 'A');
-                                Navigator.push(context, MaterialPageRoute(builder: (_) => ConnectLetterScreen()));
+                                Navigator.push(context, MaterialPageRoute(builder: (_) => LevelSelectionScreen(activityId: 'connect_letter', assetPath: 'assets/images/pictogram_menu/unir.png')));
                               },
                             ),
                             ButtonPictogram(
@@ -93,8 +84,7 @@ class Home extends StatelessWidget {
                               backgroundColor: const Color.fromARGB(255, 234, 155, 184),
                               onPressed: () {
                                 console.log('Seleccionar Pressed');
-                                final idx = words.indexWhere((w) => w.text == 'Abeja');
-                                Navigator.push(context, MaterialPageRoute(builder: (_) => SelectionWordScreen(index: idx)));
+                                Navigator.push(context, MaterialPageRoute(builder: (_) => LevelSelectionScreen(activityId: 'select_word', assetPath: 'assets/images/pictogram_menu/seleccionar.png')));
                               },
                             ),
                             ButtonPictogram(
@@ -102,8 +92,8 @@ class Home extends StatelessWidget {
                               size: buttonSize,
                               backgroundColor: const Color.fromARGB(255, 174, 128, 227),
                               onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (_) => PracticeLetterScreen()));
                                 console.log('Escribir Pressed');
+                                Navigator.push(context, MaterialPageRoute(builder: (_) => LevelSelectionScreen(activityId: 'practice_letter', assetPath: 'assets/images/pictogram_menu/escribir.png')));
                               },
                             ),
                             ButtonPictogram(
@@ -111,8 +101,8 @@ class Home extends StatelessWidget {
                               size: buttonSize,
                               backgroundColor: const Color.fromARGB(255, 215, 68, 57),
                               onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (_) => SpeakWordScreen(word: words.first)));
                                 console.log('Leer Pressed');
+                                Navigator.push(context, MaterialPageRoute(builder: (_) => LevelSelectionScreen(activityId: 'speak_word', assetPath: 'assets/images/pictogram_menu/leer.png')));
                               },
                             ),
                           ],

@@ -84,10 +84,22 @@ flutter:
     - assets/images/pictogram_menu/leer.png
     - assets/images/pictogram_menu/seleccionar.png
     - assets/images/pictogram_menu/unir.png
-    - assets/images/pictogram_letters/c.png
     - assets/images/fondo.png
     - assets/audio/letters_sounds/
-
+    - assets/images/levels/abecedario.png
+    - assets/images/levels/asociar.png
+    - assets/images/levels/completar.png
+    - assets/images/levels/contar.png
+    - assets/images/levels/copiar.png
+    - assets/images/levels/estudio.png
+    - assets/images/levels/frase.png
+    - assets/images/levels/memoria.png
+    - assets/images/levels/nombre.png
+    - assets/images/levels/ordenar.png
+    - assets/images/levels/palabra.png
+    - assets/images/levels/puzzle.png
+    - assets/images/levels/silaba.png
+    - assets/images/levels/vocales.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

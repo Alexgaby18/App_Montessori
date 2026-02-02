@@ -59,6 +59,35 @@ const List<Letter> letters = [
   Letter(char: 'Z', words: ['Zorro', 'Zapato', 'Zona', 'Pizza']),
 ];
 
+const List<Letter> vowels = [
+  Letter(char: 'A', words: ['Abeja', 'Avión', 'Árbol', 'Anillo']),
+  Letter(char: 'E', words: ['Erizo', 'Estrella', 'Escuela', 'Elefante']),
+  Letter(char: 'I', words: ['Isla', 'Iglesia', 'Imán', 'Iglú']),
+  Letter(char: 'O', words: ['Oso', 'Ojo', 'Oreja', 'Oveja']),
+  Letter(char: 'U', words: ['Uva', 'Ukelele', 'Universo', 'Uno']),
+];
+
+const List<Letter> syllables = [
+  Letter(char: 'M', words: ['Mamá', 'Mesa', 'Miel', 'Mono', 'Muñeca']),
+  Letter(char: 'P', words: ['Papa', 'Pera', 'Pipa', 'Pomo', 'Puma']),
+  Letter(char: 'L', words: ['Lápiz', 'León', 'Lima', 'Lobo', 'Luna']),
+  Letter(char: 'S', words: ['Sapo', 'Seda', 'Silla', 'Sol', 'Suma']),
+  Letter(char: 'T', words: ['Taza', 'Tela', 'Tijera', 'Tortuga', 'Tubo']),
+  Letter(char: 'N', words: ['Naranja', 'Nena', 'Nido', 'Nota', 'Nube']),
+  Letter(char: 'D', words: ['Dado', 'Dedo', 'Dios', 'Dolor', 'Dulce']),
+  Letter(char: 'R', words: ['Rana', 'Rey', 'Risa', 'Rosa', 'Rueda']),
+  Letter(char: 'F', words: ['Faro', 'Feliz', 'Fideo', 'Foca', 'Fuma']),
+  Letter(char: 'B', words: ['Barco', 'Beso', 'Billete', 'Boda', 'Burro']),
+  Letter(char: 'V', words: ['Vaca', 'Ventana', 'Vino', 'Volcán', 'Vuelo']),
+  Letter(char: 'C', words: ['Casa', 'Coco', 'Cuna']),
+  Letter(char: 'Q', words: ['Queso', 'Quince']),
+  Letter(char: 'G', words: ['Gato', 'Goma', 'Gusano']),
+  Letter(char: 'H', words: ['Hada', 'Helado', 'Hielo', 'Hola', 'Humo']),
+  Letter(char: 'J', words: ['Jabón', 'Jefe', 'Jirafa', 'Joya', 'Jugo']),
+  Letter(char: 'Y', words: ['Yate', 'Yogur', 'Yoyo', 'Yegua']),
+  Letter(char: 'Z', words: ['Zapato', 'Zebra', 'Zinc', 'Zorro', 'Zumo']),
+];
+
 // wrapper para exponer palabras sueltas a la UI
 class Word {
   final String text;
@@ -72,8 +101,18 @@ class Word {
   String toString() => 'Word(text: $text, parent: ${parent.char})';
 }
 
-// Genera la lista de palabras a partir de `letters` (no const porque se crea dinámicamente)
+// Genera la lista de palabras a partir de `letters` 
 final List<Word> words = [
   for (final l in letters)
+    for (final w in l.words) Word(text: w, parent: l),
+];
+
+final List<Word> vowelWords = [
+  for (final l in vowels)
+    for (final w in l.words) Word(text: w, parent: l),
+];
+
+final List<Word> syllableWords = [
+  for (final l in syllables)
     for (final w in l.words) Word(text: w, parent: l),
 ];

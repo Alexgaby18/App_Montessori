@@ -537,30 +537,6 @@ class _PracticeLetterScreenMLState extends State<PracticeLetterScreenML> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // // Indicador de progreso
-          // LinearProgressIndicator(
-          //   value: _index / letters.length,
-          //   backgroundColor: Colors.grey[200],
-          //   valueColor: AlwaysStoppedAnimation<Color>(
-          //     const Color.fromARGB(255, 68, 194, 193),
-          //   ),
-          //   minHeight: 8,
-          //   borderRadius: BorderRadius.circular(4),
-          // ),
-          // const SizedBox(height: 8),
-          
-          // // Contador de letras
-          // Text(
-          //   'Letra ${_index + 1} de ${letters.length}',
-          //   textAlign: TextAlign.center,
-          //   style: TextStyle(
-          //     color: Colors.grey[600],
-          //     fontSize: 14,
-          //   ),
-          // ),
-          // const SizedBox(height: 16),
-          
-          // Área de dibujo
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {

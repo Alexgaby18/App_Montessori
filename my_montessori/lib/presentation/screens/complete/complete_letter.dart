@@ -116,7 +116,7 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
     final nextIndex = (widget.index + 1).clamp(0, letters.length - 1);
     final screenWidth = MediaQuery.of(context).size.width;
     final isTablet = screenWidth > 600; // threshold ajustable
-    final sizePictogram = isTablet ? 280.0 : 120.0;
+    final sizePictogram = isTablet ? 280.0 : 180.0;
     final sizeIcon = isTablet ? 48.0 : 24.0;
 
     final Future mainPictogramFuture = _letterObj.pictogramFile(_letterObj.words.first);

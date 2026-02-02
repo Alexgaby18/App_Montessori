@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_montessori/core/constans/typography.dart';
 import 'package:my_montessori/presentation/widgets/button_letter.dart';
 import 'package:my_montessori/core/theme/animatic_background.dart';
 import 'package:my_montessori/presentation/widgets/button_pictogram_letter.dart';
