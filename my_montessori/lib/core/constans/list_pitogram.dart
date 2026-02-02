@@ -79,13 +79,9 @@ const List<Letter> syllables = [
   Letter(char: 'F', words: ['Faro', 'Feliz', 'Fideo', 'Foca', 'Fuma']),
   Letter(char: 'B', words: ['Barco', 'Beso', 'Billete', 'Boda', 'Burro']),
   Letter(char: 'V', words: ['Vaca', 'Ventana', 'Vino', 'Volcán', 'Vuelo']),
-  Letter(char: 'C', words: ['Casa', 'Coco', 'Cuna']),
-  Letter(char: 'Q', words: ['Queso', 'Quince']),
   Letter(char: 'G', words: ['Gato', 'Goma', 'Gusano']),
   Letter(char: 'H', words: ['Hada', 'Helado', 'Hielo', 'Hola', 'Humo']),
   Letter(char: 'J', words: ['Jabón', 'Jefe', 'Jirafa', 'Joya', 'Jugo']),
-  Letter(char: 'Y', words: ['Yate', 'Yogur', 'Yoyo', 'Yegua']),
-  Letter(char: 'Z', words: ['Zapato', 'Zebra', 'Zinc', 'Zorro', 'Zumo']),
 ];
 
 // wrapper para exponer palabras sueltas a la UI
@@ -116,3 +112,107 @@ final List<Word> syllableWords = [
   for (final l in syllables)
     for (final w in l.words) Word(text: w, parent: l),
 ];
+
+// Map de sílabas por letra. Cada entrada usa la misma clase `Letter` donde
+// `char` es la sílaba (ej. 'MA') y `words` son ejemplos cuyo pictograma mostrar.
+const Map<String, List<Letter>> syllablesByLetter = {
+  'M': [
+    Letter(char: 'MA', words: ['Mamá', 'Mapa']),
+    Letter(char: 'ME', words: ['Mesa', 'Medusa']),
+    Letter(char: 'MI', words: ['Miel', 'Mina']),
+    Letter(char: 'MO', words: ['Mono', 'Mochila']),
+    Letter(char: 'MU', words: ['Muñeca', 'Mundo']),
+  ],
+  'P': [
+    Letter(char: 'PA', words: ['Papá', 'Pala']),
+    Letter(char: 'PE', words: ['Pez', 'Perro']),
+    Letter(char: 'PI', words: ['Pipa', 'Pie']),
+    Letter(char: 'PO', words: ['Pomo', 'Pollito']),
+    Letter(char: 'PU', words: ['Puma', 'Pulpo']),
+  ],
+  'L': [
+    Letter(char: 'LA', words: ['Lápiz', 'Lata']),
+    Letter(char: 'LE', words: ['León', 'Leche']),
+    Letter(char: 'LI', words: ['Lima', 'Libro']),
+    Letter(char: 'LO', words: ['Lobo', 'Lomo']),
+    Letter(char: 'LU', words: ['Luna', 'Lupa']),
+  ],
+  'S': [
+    Letter(char: 'SA', words: ['Sapo', 'Sandía']),
+    Letter(char: 'SE', words: ['Serpiente', 'Seis']),
+    Letter(char: 'SI', words: ['Silla', 'Siete']),
+    Letter(char: 'SO', words: ['Sol', 'Sopa']),
+    Letter(char: 'SU', words: ['Suma', 'Suéter']),
+  ],
+  'T': [
+    Letter(char: 'TA', words: ['Taza', 'Tambor']),
+    Letter(char: 'TE', words: ['Tele', 'Teléfono']),
+    Letter(char: 'TI', words: ['Tijera', 'Tigre']),
+    Letter(char: 'TO', words: ['Tortuga', 'Toro']),
+    Letter(char: 'TU', words: ['Tubo', 'Tulipán']),
+  ],
+  'D': [
+    Letter(char: 'DA', words: ['Dado', 'Dardo']),
+    Letter(char: 'DE', words: ['Dedo', 'Delfín']),
+    Letter(char: 'DI', words: ['Dino', 'Diente']),
+    Letter(char: 'DO', words: ['Dos', 'Domino']),
+    Letter(char: 'DU', words: ['Dulce', 'Duende']),
+  ],
+  'N': [
+    Letter(char: 'NA', words: ['Naranja', 'Nave']),
+    Letter(char: 'NE', words: ['Negro', 'Nevera']),
+    Letter(char: 'NI', words: ['Nido', 'Niño']),
+    Letter(char: 'NO', words: ['Nota', 'Noche']),
+    Letter(char: 'NU', words: ['Nube', 'Nudo']),
+  ],
+  'R': [
+    Letter(char: 'RA', words: ['Rana', 'Rata']),
+    Letter(char: 'RE', words: ['Reloj', 'Reno']),
+    Letter(char: 'RI', words: ['Risa', 'Río']),
+    Letter(char: 'RO', words: ['Rosa', 'Roca']),
+    Letter(char: 'RU', words: ['Rueda', 'Ruleta']),
+  ],
+  'F':[
+    Letter(char: 'FA', words: ['Faro', 'Falda']),
+    Letter(char: 'FE', words: ['Feliz', 'Feria']),
+    Letter(char: 'FI', words: ['Fideo', 'Fiesta']),
+    Letter(char: 'FO', words: ['Foca', 'Foco']),
+    Letter(char: 'FU', words: ['Fuego', 'Futbol']),
+  ],
+  'B':[
+    Letter(char: 'BA', words: ['Ballena', 'Barco']),
+    Letter(char: 'BE', words: ['Bebé', 'Beso']),
+    Letter(char: 'BI', words: ['Bicicleta', 'Billete']),
+    Letter(char: 'BO', words: ['Boca', 'Bola']),
+    Letter(char: 'BU', words: ['Burro', 'Búho']),
+  ],
+  'V':[
+    Letter(char: 'VA', words: ['Vaca', 'Vaso']),
+    Letter(char: 'VE', words: ['Vela', 'Ventana']),
+    Letter(char: 'VI', words: ['Vino', 'Vida']),
+    Letter(char: 'VO', words: ['Volcán', 'Volar']),
+    Letter(char: 'VU', words: ['Vuelo', 'Vuelta']),
+  ],
+  'G':[
+    Letter(char: 'GA', words: ['Gato', 'Gafas']),
+    Letter(char: 'GE', words: ['Genio', 'Gente']),
+    Letter(char: 'GI', words: ['Girasol', 'Gigante']),
+    Letter(char: 'GO', words: ['Goma', 'Gol']),
+    Letter(char: 'GU', words: ['Guitarra', 'Guante']),
+  ],
+  'H':[
+    Letter(char: 'HA', words: ['Hada', 'Hacha']),
+    Letter(char: 'HE', words: ['Helado', 'Hermana']),
+    Letter(char: 'HI', words: ['Hielo', 'Higo']),
+    Letter(char: 'HO', words: ['Hoja', 'Hormiga']),
+    Letter(char: 'HU', words: ['Humo', 'Huella']),
+  ],
+  'J':[
+    Letter(char: 'JA', words: ['Jabón', 'Jarra']),
+    Letter(char: 'JE', words: ['Jefe', 'Jeringa']),
+    Letter(char: 'JI', words: ['Jirafa', 'Jinete']),
+    Letter(char: 'JO', words: ['Joya', 'Joven']),
+    Letter(char: 'JU', words: ['Jugo', 'Juguete']),
+  ],
+  // Añade más letras/sílabas según necesites...
+};
