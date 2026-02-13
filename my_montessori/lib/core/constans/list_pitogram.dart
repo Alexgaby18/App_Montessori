@@ -190,7 +190,7 @@ const Map<String, List<Letter>> syllablesByLetter = {
     Letter(char: 'VA', words: ['Vaca', 'Vaso', 'Vago', 'Valle']),
     Letter(char: 'VE', words: ['Vela', 'Ventana', 'Verde', 'Ver']),
     Letter(char: 'VI', words: ['Vino', 'Vida', 'Viento', 'Violeta']),
-    Letter(char: 'VO', words: ['Volcán', 'Volar', 'Volante', 'Votar']),
+    Letter(char: 'VO', words: ['Volar', 'Volcán', 'Volante', 'Votar']),
     Letter(char: 'VU', words: ['Vuelo', 'Vuelta', 'Vuestro']),
   ],
   'G':[
