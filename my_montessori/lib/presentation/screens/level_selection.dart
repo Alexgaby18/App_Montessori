@@ -4,10 +4,14 @@ import 'package:my_montessori/presentation/widgets/button_pictogram.dart';
 import 'package:my_montessori/presentation/screens/learn/learn_letter.dart';
 import 'package:my_montessori/presentation/screens/learn/easy.dart';
 import 'package:my_montessori/presentation/screens/complete/complete_letter.dart';
+import 'package:my_montessori/presentation/screens/complete/complete_random_letters.dart';
+import 'package:my_montessori/presentation/screens/complete/complete_full_word.dart';
+import 'package:my_montessori/presentation/screens/complete/complete_syllables.dart';
 import 'package:my_montessori/presentation/screens/selection/selection_word.dart';
 import 'package:my_montessori/presentation/screens/practice/practice_letter.dart';
 import 'package:my_montessori/presentation/screens/conect/conect_letter.dart';
 import 'package:my_montessori/presentation/screens/learn/hard.dart';
+import 'package:my_montessori/presentation/screens/learn/learn_sentences.dart';
 
 typedef LevelSelectedCallback = void Function(String activityId, dynamic level);
 
@@ -17,15 +21,20 @@ final Map<String, Widget Function(int)> _activityRouteBuilders = {
   'easy': (i) => EasyLearnLetterScreen(index: i),
   'hard': (i) => HardLearnLetterScreen(index: i),
   'complete_letter': (i) => CompleteLetterScreen(index: i),
+  'complete_random_letters': (i) => CompleteRandomLettersScreen(index: i),
+  'complete_syllables': (i) => CompleteSyllablesScreen(index: i),
   'selection_word': (i) => SelectionWordScreen(index: i),
   'practice_letter': (i) => PracticeLetterScreen(),
   'connect_letter': (i) => ConnectLetterScreen(),
+  'speak_word': (i) => LearnSentenceScreen(index: i),
+  'complete_full_word': (i) => CompleteFullWordScreen(index: i),
 };
 
 class LevelSelectionScreen extends StatelessWidget {
   final String activityId;
   final String? title;
   final String? assetPath;
+  final Color? appBarColor;
   final List<Map<String, dynamic>>? customLevels;
   final dynamic initialLevel;
   final LevelSelectedCallback? onLevelSelected;
@@ -35,6 +44,7 @@ class LevelSelectionScreen extends StatelessWidget {
     required this.activityId,
     this.title,
     this.assetPath,
+    this.appBarColor,
     this.customLevels,
     this.initialLevel,
     this.onLevelSelected,
@@ -66,8 +76,8 @@ class LevelSelectionScreen extends StatelessWidget {
         },
         {
           'label': 'Experto',
-          'value': 4,
-          'route': 'learn_letter', // Misma actividad, diferente nivel
+          'value': 1,
+          'route': 'speak_word', // Misma actividad, diferente nivel
           'asset': 'assets/images/levels/frase.png'
         },
       ],
@@ -84,20 +94,20 @@ class LevelSelectionScreen extends StatelessWidget {
         },
         {
           'label': 'Medio',
-          'value': 2,
-          'route': 'complete_letter',
+          'value': 1,
+          'route': 'complete_letter_random', 
           'asset': 'assets/images/levels/nombre.png'
         },
         {
           'label': 'Difícil',
-          'value': 3,
-          'route': 'complete_letter',
-          'asset': 'assets/images/levels/completar.png'
+          'value': 1,
+          'route': 'complete_syllables',
+          'asset': 'assets/images/levels/silaba.png'
         },
         {
           'label': 'Experto',
-          'value': 4,
-          'route': 'complete_letter',
+          'value': 1,
+          'route': 'complete_full_word',
           'asset': 'assets/images/levels/frase.png'
         },
       ],
@@ -230,11 +240,12 @@ class LevelSelectionScreen extends StatelessWidget {
     final displayTitle = title ?? config['title'] ?? activityId;
     final displayAsset = assetPath ?? (config['icon'] as String?);
     final levelList = customLevels ?? (config['levels'] as List<Map<String, dynamic>>? ?? []);
+    final displayAppBarColor = appBarColor ?? const Color.fromARGB(255, 68, 194, 193);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(displayTitle),
-        backgroundColor: const Color.fromARGB(255, 68, 194, 193),
+        backgroundColor: displayAppBarColor,
       ),
       body: Stack(
         children: [

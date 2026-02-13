@@ -57,7 +57,16 @@ class Home extends StatelessWidget {
                               backgroundColor: const Color.fromARGB(255, 68, 194, 193),
                               onPressed: () {
                                 console.log('Aprender Pressed');
-                                Navigator.push(context, MaterialPageRoute(builder: (_) => LevelSelectionScreen(activityId: 'learn_letter', assetPath: 'assets/images/pictogram_menu/aprender.png')));
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const LevelSelectionScreen(
+                                      activityId: 'learn_letter',
+                                      assetPath: 'assets/images/pictogram_menu/aprender.png',
+                                      appBarColor: Color.fromARGB(255, 68, 194, 193),
+                                    ),
+                                  ),
+                                );
                               },
                             ),
                             ButtonPictogram(
@@ -66,7 +75,16 @@ class Home extends StatelessWidget {
                               backgroundColor: const Color.fromARGB(255, 66, 170, 223),
                               onPressed: () {
                                 console.log('Completar Pressed');
-                                Navigator.push(context, MaterialPageRoute(builder: (_) => LevelSelectionScreen(activityId: 'complete_letter', assetPath: 'assets/images/pictogram_menu/completar.png')));
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const LevelSelectionScreen(
+                                      activityId: 'complete_letter',
+                                      assetPath: 'assets/images/pictogram_menu/completar.png',
+                                      appBarColor: Color.fromARGB(255, 66, 170, 223),
+                                    ),
+                                  ),
+                                );
                               },
                             ),
                             ButtonPictogram(
@@ -75,7 +93,16 @@ class Home extends StatelessWidget {
                               backgroundColor: const Color.fromARGB(255, 245, 163, 35),
                               onPressed: () {
                                 console.log('Unir Pressed');
-                                Navigator.push(context, MaterialPageRoute(builder: (_) => LevelSelectionScreen(activityId: 'connect_letter', assetPath: 'assets/images/pictogram_menu/unir.png')));
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const LevelSelectionScreen(
+                                      activityId: 'connect_letter',
+                                      assetPath: 'assets/images/pictogram_menu/unir.png',
+                                      appBarColor: Color.fromARGB(255, 245, 163, 35),
+                                    ),
+                                  ),
+                                );
                               },
                             ),
                             ButtonPictogram(
@@ -84,7 +111,16 @@ class Home extends StatelessWidget {
                               backgroundColor: const Color.fromARGB(255, 234, 155, 184),
                               onPressed: () {
                                 console.log('Seleccionar Pressed');
-                                Navigator.push(context, MaterialPageRoute(builder: (_) => LevelSelectionScreen(activityId: 'select_word', assetPath: 'assets/images/pictogram_menu/seleccionar.png')));
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const LevelSelectionScreen(
+                                      activityId: 'select_word',
+                                      assetPath: 'assets/images/pictogram_menu/seleccionar.png',
+                                      appBarColor: Color.fromARGB(255, 234, 155, 184),
+                                    ),
+                                  ),
+                                );
                               },
                             ),
                             ButtonPictogram(
@@ -93,7 +129,16 @@ class Home extends StatelessWidget {
                               backgroundColor: const Color.fromARGB(255, 174, 128, 227),
                               onPressed: () {
                                 console.log('Escribir Pressed');
-                                Navigator.push(context, MaterialPageRoute(builder: (_) => LevelSelectionScreen(activityId: 'practice_letter', assetPath: 'assets/images/pictogram_menu/escribir.png')));
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const LevelSelectionScreen(
+                                      activityId: 'practice_letter',
+                                      assetPath: 'assets/images/pictogram_menu/escribir.png',
+                                      appBarColor: Color.fromARGB(255, 174, 128, 227),
+                                    ),
+                                  ),
+                                );
                               },
                             ),
                             ButtonPictogram(
@@ -102,7 +147,16 @@ class Home extends StatelessWidget {
                               backgroundColor: const Color.fromARGB(255, 215, 68, 57),
                               onPressed: () {
                                 console.log('Leer Pressed');
-                                Navigator.push(context, MaterialPageRoute(builder: (_) => LevelSelectionScreen(activityId: 'speak_word', assetPath: 'assets/images/pictogram_menu/leer.png')));
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const LevelSelectionScreen(
+                                      activityId: 'speak_word',
+                                      assetPath: 'assets/images/pictogram_menu/leer.png',
+                                      appBarColor: Color.fromARGB(255, 215, 68, 57),
+                                    ),
+                                  ),
+                                );
                               },
                             ),
                           ],
