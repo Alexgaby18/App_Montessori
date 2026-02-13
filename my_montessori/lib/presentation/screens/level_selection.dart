@@ -9,7 +9,10 @@ import 'package:my_montessori/presentation/screens/complete/complete_full_word.d
 import 'package:my_montessori/presentation/screens/complete/complete_syllables.dart';
 import 'package:my_montessori/presentation/screens/selection/selection_word.dart';
 import 'package:my_montessori/presentation/screens/practice/practice_letter.dart';
+import 'package:my_montessori/presentation/screens/conect/conect_pictogram.dart';
 import 'package:my_montessori/presentation/screens/conect/conect_letter.dart';
+import 'package:my_montessori/presentation/screens/conect/conect_syllable.dart';
+import 'package:my_montessori/presentation/screens/conect/conect_word.dart';
 import 'package:my_montessori/presentation/screens/learn/hard.dart';
 import 'package:my_montessori/presentation/screens/learn/learn_sentences.dart';
 
@@ -26,8 +29,11 @@ final Map<String, Widget Function(int)> _activityRouteBuilders = {
   'selection_word': (i) => SelectionWordScreen(index: i),
   'practice_letter': (i) => PracticeLetterScreen(),
   'connect_letter': (i) => ConnectLetterScreen(),
+  'connect_pictogram': (i) => ConnectPictogramScreen(),
   'speak_word': (i) => LearnSentenceScreen(index: i),
   'complete_full_word': (i) => CompleteFullWordScreen(index: i),
+  'connect_syllable': (i) => ConnectSyllableScreen(),
+  'connect_word': (i) => ConnectWordScreen(),
 };
 
 class LevelSelectionScreen extends StatelessWidget {
@@ -78,7 +84,7 @@ class LevelSelectionScreen extends StatelessWidget {
           'label': 'Experto',
           'value': 1,
           'route': 'speak_word', // Misma actividad, diferente nivel
-          'asset': 'assets/images/levels/frase.png'
+          'asset': 'assets/images/levels/leer_pictogramas.png'
         },
       ],
     },
@@ -90,13 +96,13 @@ class LevelSelectionScreen extends StatelessWidget {
           'label': 'Fácil',
           'value': 1,
           'route': 'complete_letter',
-          'asset': 'assets/images/levels/vocales.png'
+          'asset': 'assets/images/levels/primera.png'
         },
         {
           'label': 'Medio',
           'value': 1,
-          'route': 'complete_letter_random', 
-          'asset': 'assets/images/levels/nombre.png'
+          'route': 'complete_random_letters', 
+          'asset': 'assets/images/levels/abecedario.png'
         },
         {
           'label': 'Difícil',
@@ -108,18 +114,18 @@ class LevelSelectionScreen extends StatelessWidget {
           'label': 'Experto',
           'value': 1,
           'route': 'complete_full_word',
-          'asset': 'assets/images/levels/frase.png'
+          'asset': 'assets/images/levels/nombre.png'
         },
       ],
     },
     'connect_letter': {
-      'title': 'Conectar letras',
+      'title': 'Conectar pictogramas',
       'icon': 'assets/images/pictogram_menu/connect.png',
       'levels': [
         {
           'label': 'Fácil',
           'value': 1,
-          'route': 'connect_letter',
+          'route': 'connect_pictogram',
           'asset': 'assets/images/levels/asociar.png'
         },
         {
@@ -131,13 +137,13 @@ class LevelSelectionScreen extends StatelessWidget {
         {
           'label': 'Difícil',
           'value': 3,
-          'route': 'connect_letter',
+          'route': 'connect_syllable',
           'asset': 'assets/images/levels/silaba.png'
         },
         {
           'label': 'Experto',
           'value': 4,
-          'route': 'connect_letter',
+          'route': 'connect_word',
           'asset': 'assets/images/levels/palabra.png'
         },
       ],

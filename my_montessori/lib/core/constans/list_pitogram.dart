@@ -118,7 +118,7 @@ final List<Word> syllableWords = [
 const Map<String, List<Letter>> syllablesByLetter = {
   'M': [
     Letter(char: 'MA', words: ['Mamá', 'Mapa', 'Mariposa', 'Manzana']),
-    Letter(char: 'ME', words: ['Mesa', 'Medusa', 'Melón', 'Mermelada']),
+    Letter(char: 'ME', words: ['Mesa', 'Medusa', 'Melón', 'Menta']),
     Letter(char: 'MI', words: ['Mimo', 'Mina', 'Mira', 'Miel']),
     Letter(char: 'MO', words: ['Mono', 'Mochila', 'Mora', 'Móvil']),
     Letter(char: 'MU', words: ['Muñeca', 'Mundo', 'Música', 'Muleta']),
