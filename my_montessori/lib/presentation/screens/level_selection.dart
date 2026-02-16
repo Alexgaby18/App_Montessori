@@ -12,6 +12,7 @@ import 'package:my_montessori/presentation/screens/selection/selection_syllable_
 import 'package:my_montessori/presentation/screens/selection/selection_word.dart';
 import 'package:my_montessori/presentation/screens/selection/selection_syllable.dart';
 import 'package:my_montessori/presentation/screens/practice/practice_letter.dart';
+import 'package:my_montessori/presentation/screens/practice/practice_word.dart';
 import 'package:my_montessori/presentation/screens/conect/conect_pictogram.dart';
 import 'package:my_montessori/presentation/screens/conect/conect_letter.dart';
 import 'package:my_montessori/presentation/screens/conect/conect_syllable.dart';
@@ -34,6 +35,7 @@ final Map<String, Widget Function(int)> _activityRouteBuilders = {
   'selection_letter': (i) => SelectionLetterScreen(index: i),
   'selection_syllable_voice': (i) => SelectionSyllableVoiceScreen(index: i),
   'practice_letter': (i) => PracticeLetterScreen(),
+  'practice_word': (i) => const PracticeWordScreen(),
   'connect_letter': (i) => ConnectLetterScreen(),
   'connect_pictogram': (i) => ConnectPictogramScreen(),
   'speak_word': (i) => LearnSentenceScreen(index: i),
@@ -189,16 +191,16 @@ class LevelSelectionScreen extends StatelessWidget {
       'icon': 'assets/images/pictogram_menu/practice.png',
       'levels': [
         {
-          'label': 'Fácil',
-          'value': 1,
-          'route': 'practice_letter',
-          'asset': 'assets/images/levels/vocales.png'
-        },
-        {
           'label': 'Medio',
           'value': 1,
           'route': 'practice_letter',
           'asset': 'assets/images/levels/abecedario.png'
+        },
+        {
+          'label': 'Palabra',
+          'value': 1,
+          'route': 'practice_word',
+          'asset': 'assets/images/levels/palabra.png'
         },
       ],
     },
