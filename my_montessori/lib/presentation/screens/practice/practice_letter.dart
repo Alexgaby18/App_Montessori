@@ -28,7 +28,7 @@ class _PracticeLetterScreenState extends State<PracticeLetterScreen> {
                   : 'Practicar letras (ML)')
               : 'Practicar letras',
         ),
-        backgroundColor: const Color.fromARGB(255, 68, 194, 193),
+        backgroundColor: const Color.fromARGB(255, 174, 128, 227),
       ),
       body: Stack(
         children: [

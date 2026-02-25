@@ -135,7 +135,7 @@ class _ConnectWordScreenState extends State<ConnectWordScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Conecta palabras'),
-        backgroundColor: const Color.fromARGB(255, 68, 194, 193),
+        backgroundColor: const Color.fromARGB(255, 245, 163, 35),
         elevation: 0,
       ),
       body: Stack(

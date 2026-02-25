@@ -119,7 +119,7 @@ class _SelectionSyllableVoiceScreenState extends State<SelectionSyllableVoiceScr
       return Scaffold(
         appBar: AppBar(
           title: const Text('Selecciona la silaba'),
-          backgroundColor: const Color.fromARGB(255, 68, 194, 193),
+          backgroundColor: const Color.fromARGB(255, 234, 155, 184),
           elevation: 0,
         ),
         body: const Center(child: Text('No hay silabas definidas')),
@@ -133,7 +133,7 @@ class _SelectionSyllableVoiceScreenState extends State<SelectionSyllableVoiceScr
     return Scaffold(
       appBar: AppBar(
         title: const Text('Selecciona la silaba'),
-        backgroundColor: const Color.fromARGB(255, 68, 194, 193),
+        backgroundColor: const Color.fromARGB(255, 234, 155, 184),
         elevation: 0,
       ),
       body: Stack(

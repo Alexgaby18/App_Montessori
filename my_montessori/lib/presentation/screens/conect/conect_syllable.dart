@@ -169,7 +169,7 @@ class _ConnectSyllableScreenState extends State<ConnectSyllableScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Conecta silabas'),
-        backgroundColor: const Color.fromARGB(255, 68, 194, 193),
+        backgroundColor: const Color.fromARGB(255, 245, 163, 35),
         elevation: 0,
       ),
       body: Stack(

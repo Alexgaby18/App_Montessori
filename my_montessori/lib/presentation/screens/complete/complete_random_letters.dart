@@ -100,7 +100,7 @@ class _CompleteRandomLettersScreenState extends State<CompleteRandomLettersScree
     return Scaffold(
       appBar: AppBar(
         title: const Text('Completa la palabra'),
-        backgroundColor: const Color.fromARGB(255, 68, 194, 193),
+        backgroundColor: const Color.fromARGB(255, 66, 170, 223),
       ),
       body: Stack(
         children: [

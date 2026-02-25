@@ -452,7 +452,7 @@ class _PracticeWordScreenMLState extends State<PracticeWordScreenML> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Practicar palabra $currentWord'),
-        backgroundColor: const Color.fromARGB(255, 68, 194, 193),
+        backgroundColor: const Color.fromARGB(255, 174, 128, 227),
         actions: [
           IconButton(
             iconSize: 44,

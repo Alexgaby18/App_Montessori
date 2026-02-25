@@ -145,7 +145,7 @@ class _CompleteSyllablesScreenState extends State<CompleteSyllablesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Completa por sílaba'),
-        backgroundColor: const Color.fromARGB(255, 68, 194, 193),
+        backgroundColor: const Color.fromARGB(255, 66, 170, 223),
       ),
       body: Stack(
         children: [

@@ -124,7 +124,7 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Completa la letra ${_letterObj.char}'),
-        backgroundColor: const Color.fromARGB(255, 68, 194, 193),
+        backgroundColor: const Color.fromARGB(255, 66, 170, 223),
       ),
       body: Stack(
         children: [

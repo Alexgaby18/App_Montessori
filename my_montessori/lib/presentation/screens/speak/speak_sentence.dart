@@ -73,7 +73,7 @@ class _SpeakSentenceScreenState extends State<SpeakSentenceScreen> {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Lee la oracion'),
-          backgroundColor: const Color.fromARGB(255, 68, 194, 193),
+          backgroundColor: const Color.fromARGB(255, 215, 68, 57),
           elevation: 0,
         ),
         body: const Center(child: Text('No hay oraciones definidas')),
@@ -101,7 +101,7 @@ class _SpeakSentenceScreenState extends State<SpeakSentenceScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Lee la oracion'),
-        backgroundColor: const Color.fromARGB(255, 68, 194, 193),
+        backgroundColor: const Color.fromARGB(255, 215, 68, 57),
         elevation: 0,
       ),
       body: Stack(

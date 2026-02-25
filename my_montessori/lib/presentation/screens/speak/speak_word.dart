@@ -84,7 +84,7 @@ class _SpeakWordScreenState extends State<SpeakWordScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Lee la palabra'),
-        backgroundColor: const Color.fromARGB(255, 68, 194, 193),
+        backgroundColor: const Color.fromARGB(255, 215, 68, 57),
         elevation: 0,
       ),
       body: Stack(

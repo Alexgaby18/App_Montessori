@@ -49,7 +49,7 @@ class _PracticeWordScreenState extends State<PracticeWordScreen> {
         title: Text(
           _useMachineLearning ? 'Practicar la palabra $currentWord' : 'Practicar palabras',
         ),
-        backgroundColor: const Color.fromARGB(255, 68, 194, 193),
+        backgroundColor: const Color.fromARGB(255, 174, 128, 227),
       ),
       body: Stack(
         children: [

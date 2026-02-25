@@ -105,7 +105,7 @@ class _SelectionLetterScreenState extends State<SelectionLetterScreen> {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Selecciona la letra'),
-          backgroundColor: const Color.fromARGB(255, 68, 194, 193),
+          backgroundColor: const Color.fromARGB(255, 234, 155, 184),
           elevation: 0,
         ),
         body: const Center(child: Text('No hay letras definidas')),
@@ -119,7 +119,7 @@ class _SelectionLetterScreenState extends State<SelectionLetterScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Selecciona la letra'),
-        backgroundColor: const Color.fromARGB(255, 68, 194, 193),
+        backgroundColor: const Color.fromARGB(255, 234, 155, 184),
         elevation: 0,
       ),
       body: Stack(

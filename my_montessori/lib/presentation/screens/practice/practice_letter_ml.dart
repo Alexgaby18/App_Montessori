@@ -627,7 +627,7 @@ class _PracticeLetterScreenMLState extends State<PracticeLetterScreenML> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Practicar letra $currentLetter'),
-        backgroundColor: const Color.fromARGB(255, 68, 194, 193),
+        backgroundColor: const Color.fromARGB(255, 174, 128, 227),
         actions: [
           IconButton(
             iconSize: 44,
