@@ -253,44 +253,55 @@ class LevelSelectionScreen extends StatelessWidget {
       body: Stack(
         children: [
           BackgroundAnimation(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 80.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (displayAsset != null)
-                  Center(
-                    child: SizedBox(
-                      width: 140.0,
-                      height: 140.0,
-                      child: FittedBox(
-                        fit: BoxFit.contain,
-                        child: ButtonPictogram(
-                          assetPath: displayAsset,
-                          size: 140.0,
-                          backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-                          onPressed: () {},
-                        ),
+          SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isCompactHeight = constraints.maxHeight < 620;
+                final verticalPadding = isCompactHeight ? 16.0 : 32.0;
+                final iconSize = isCompactHeight ? 110.0 : 140.0;
+                final gapAfterIcon = isCompactHeight ? 20.0 : 48.0;
+
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: verticalPadding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (displayAsset != null)
+                        Center(
+                          child: SizedBox(
+                            width: iconSize,
+                            height: iconSize,
+                            child: FittedBox(
+                              fit: BoxFit.contain,
+                              child: ButtonPictogram(
+                                assetPath: displayAsset,
+                                size: iconSize,
+                                backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                                onPressed: () {},
+                              ),
+                            ),
+                          ),
+                        )
+                      else
+                        const SizedBox(height: 24),
+                      SizedBox(height: gapAfterIcon),
+                      Expanded(
+                        child: levelList.isEmpty
+                            ? _buildNoLevelsAvailable()
+                            : GridView.count(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 12,
+                                mainAxisSpacing: 12,
+                                childAspectRatio: isCompactHeight ? 1.1 : 1.2,
+                                children: levelList.map((level) {
+                                  return _buildLevelCard(context, level);
+                                }).toList(),
+                              ),
                       ),
-                    ),
-                  )
-                else
-                  const SizedBox(height: 24),
-                const SizedBox(height: 64),
-                Expanded(
-                  child: levelList.isEmpty
-                      ? _buildNoLevelsAvailable()
-                      : GridView.count(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          childAspectRatio: 1.2,
-                          children: levelList.map((level) {
-                            return _buildLevelCard(context, level);
-                          }).toList(),
-                        ),
-                ),
-              ],
+                    ],
+                  ),
+                );
+              },
             ),
           ),
         ],

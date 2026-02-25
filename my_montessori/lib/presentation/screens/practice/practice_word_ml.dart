@@ -303,7 +303,7 @@ class _PracticeWordScreenMLState extends State<PracticeWordScreenML> {
                       fontSize: height * 0.90,
                       letterSpacing: 25.0,
                       color: Colors.grey.withOpacity(0.15),
-                      fontWeight: FontWeight.w300,
+                      fontWeight: FontWeight.w400,
                       fontFamily: 'DancingScript',
                     ),
                   ),

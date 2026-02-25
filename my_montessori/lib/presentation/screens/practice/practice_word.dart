@@ -17,6 +17,22 @@ class _PracticeWordScreenState extends State<PracticeWordScreen> {
   bool _useMachineLearning = true;
   int _mlStartIndex = 0;
   bool _isUppercase = true;
+  bool _isLeaving = false;
+
+  Future<void> _restorePortraitOrientation() {
+    return SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  }
+
+  Future<void> _leaveScreen() async {
+    if (_isLeaving || !mounted) return;
+    _isLeaving = true;
+    await _restorePortraitOrientation();
+    if (!mounted) return;
+    Navigator.of(context).pop();
+  }
 
   @override
   void initState() {
@@ -29,12 +45,7 @@ class _PracticeWordScreenState extends State<PracticeWordScreen> {
 
   @override
   void dispose() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
+    _restorePortraitOrientation();
     super.dispose();
   }
 
@@ -44,82 +55,93 @@ class _PracticeWordScreenState extends State<PracticeWordScreen> {
         ? (_isUppercase ? words[_mlStartIndex].text.toUpperCase() : words[_mlStartIndex].text.toLowerCase())
         : 'palabras';
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          _useMachineLearning ? 'Practicar la palabra $currentWord' : 'Practicar palabras',
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _leaveScreen();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: _leaveScreen,
+          ),
+          title: Text(
+            _useMachineLearning ? 'Practicar la palabra $currentWord' : 'Practicar palabras',
+          ),
+          backgroundColor: const Color.fromARGB(255, 174, 128, 227),
         ),
-        backgroundColor: const Color.fromARGB(255, 174, 128, 227),
-      ),
-      body: Stack(
-        children: [
-          const BackgroundAnimation(),
-          SafeArea(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        iconSize: 44,
-                        color: const Color.fromARGB(255, 55, 35, 28),
-                        tooltip: _isUppercase ? 'Cambiar a minúsculas' : 'Cambiar a mayúsculas',
-                        onPressed: () => setState(() => _isUppercase = !_isUppercase),
-                        icon: const Text(
-                          'Aa',
-                          style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 55, 35, 28)),
-                        ),
-                      ),
-                      IconButton(
-                        iconSize: 44,
-                        color: const Color.fromARGB(255, 55, 35, 28),
-                        icon: const Icon(Icons.volume_up),
-                        onPressed: () {
-                          if (_useMachineLearning) {
-                            AudioService.instance.speak('Practica escribiendo la palabra $currentWord');
-                          } else {
-                            AudioService.instance.speak('Selecciona una palabra para practicar');
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: _useMachineLearning
-                      ? PracticeWordScreenML(
-                          embedded: true,
-                          initialIndex: _mlStartIndex,
-                          initialIsUppercase: _isUppercase,
-                          onIndexChanged: (newIndex) => setState(() => _mlStartIndex = newIndex),
-                        )
-                      : Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: ListView.builder(
-                            itemCount: words.length,
-                            itemBuilder: (context, index) {
-                              final word = words[index].text;
-                              final display = _isUppercase ? word.toUpperCase() : word.toLowerCase();
-                              return ButtonWord(
-                                text: display,
-                                onPressed: () {
-                                  setState(() {
-                                    _mlStartIndex = index;
-                                    _useMachineLearning = true;
-                                  });
-                                  AudioService.instance.speak(word);
-                                },
-                              );
-                            },
+        body: Stack(
+          children: [
+            const BackgroundAnimation(),
+            SafeArea(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        IconButton(
+                          iconSize: 44,
+                          color: const Color.fromARGB(255, 55, 35, 28),
+                          tooltip: _isUppercase ? 'Cambiar a minúsculas' : 'Cambiar a mayúsculas',
+                          onPressed: () => setState(() => _isUppercase = !_isUppercase),
+                          icon: const Text(
+                            'Aa',
+                            style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 55, 35, 28)),
                           ),
                         ),
-                ),
-              ],
+                        IconButton(
+                          iconSize: 44,
+                          color: const Color.fromARGB(255, 55, 35, 28),
+                          icon: const Icon(Icons.volume_up),
+                          onPressed: () {
+                            if (_useMachineLearning) {
+                              AudioService.instance.speak('Practica escribiendo la palabra $currentWord');
+                            } else {
+                              AudioService.instance.speak('Selecciona una palabra para practicar');
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: _useMachineLearning
+                        ? PracticeWordScreenML(
+                            embedded: true,
+                            initialIndex: _mlStartIndex,
+                            initialIsUppercase: _isUppercase,
+                            onIndexChanged: (newIndex) => setState(() => _mlStartIndex = newIndex),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: ListView.builder(
+                              itemCount: words.length,
+                              itemBuilder: (context, index) {
+                                final word = words[index].text;
+                                final display = _isUppercase ? word.toUpperCase() : word.toLowerCase();
+                                return ButtonWord(
+                                  text: display,
+                                  onPressed: () {
+                                    setState(() {
+                                      _mlStartIndex = index;
+                                      _useMachineLearning = true;
+                                    });
+                                    AudioService.instance.speak(word);
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
