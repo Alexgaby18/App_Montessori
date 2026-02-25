@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_montessori/core/theme/animatic_background.dart';
+import 'package:my_montessori/presentation/screens/speak/speak_word.dart';
+import 'package:my_montessori/core/constans/list_pitogram.dart';
 import 'package:my_montessori/presentation/widgets/button_pictogram.dart';
 import 'package:my_montessori/presentation/screens/learn/learn_letter.dart';
 import 'package:my_montessori/presentation/screens/learn/easy.dart';
@@ -19,6 +21,7 @@ import 'package:my_montessori/presentation/screens/conect/conect_syllable.dart';
 import 'package:my_montessori/presentation/screens/conect/conect_word.dart';
 import 'package:my_montessori/presentation/screens/learn/hard.dart';
 import 'package:my_montessori/presentation/screens/learn/learn_sentences.dart';
+import 'package:my_montessori/presentation/screens/speak/speak_sentence.dart';
 
 typedef LevelSelectedCallback = void Function(String activityId, dynamic level);
 
@@ -27,21 +30,31 @@ final Map<String, Widget Function(int)> _activityRouteBuilders = {
   'learn_letter': (i) => LearnLetterScreen(index: i),
   'easy': (i) => EasyLearnLetterScreen(index: i),
   'hard': (i) => HardLearnLetterScreen(index: i),
+  'learn_sentences': (i) => LearnSentenceScreen(index: i),
+
   'complete_letter': (i) => CompleteLetterScreen(index: i),
   'complete_random_letters': (i) => CompleteRandomLettersScreen(index: i),
   'complete_syllables': (i) => CompleteSyllablesScreen(index: i),
-  'selection_word': (i) => SelectionWordScreen(index: i),
-  'selection_syllable': (i) => SelectionSyllableScreen(index: i),
+  'complete_full_word': (i) => CompleteFullWordScreen(index: i),
+
   'selection_letter': (i) => SelectionLetterScreen(index: i),
+  'selection_syllable': (i) => SelectionSyllableScreen(index: i),
   'selection_syllable_voice': (i) => SelectionSyllableVoiceScreen(index: i),
+  'selection_word': (i) => SelectionWordScreen(index: i),
+
   'practice_letter': (i) => PracticeLetterScreen(),
   'practice_word': (i) => const PracticeWordScreen(),
-  'connect_letter': (i) => ConnectLetterScreen(),
+
   'connect_pictogram': (i) => ConnectPictogramScreen(),
-  'speak_word': (i) => LearnSentenceScreen(index: i),
-  'complete_full_word': (i) => CompleteFullWordScreen(index: i),
+  'connect_letter': (i) => ConnectLetterScreen(),
   'connect_syllable': (i) => ConnectSyllableScreen(),
   'connect_word': (i) => ConnectWordScreen(),
+
+  'speak_word': (i) {
+    final int index = (i >= 0 && i < words.length) ? i : 0;
+    return SpeakWordScreen(word: words[index]);
+  },
+  'speak_sentence': (i) => SpeakSentenceScreen(index: i),
 };
 
 class LevelSelectionScreen extends StatelessWidget {
@@ -73,7 +86,7 @@ class LevelSelectionScreen extends StatelessWidget {
         {
           'label': 'Fácil',
           'value': 1,
-          'route': 'easy', // ¡Usa el mismo key que en _activityRouteBuilders!
+          'route': 'easy', 
           'asset': 'assets/images/levels/vocales.png'
         },
         {
@@ -85,13 +98,13 @@ class LevelSelectionScreen extends StatelessWidget {
         {
           'label': 'Difícil',
           'value': 1,
-          'route': 'hard', // Misma actividad, diferente nivel
+          'route': 'hard', 
           'asset': 'assets/images/levels/silaba.png'
         },
         {
           'label': 'Experto',
           'value': 1,
-          'route': 'speak_word', // Misma actividad, diferente nivel
+          'route': 'learn_sentences', 
           'asset': 'assets/images/levels/leer_pictogramas.png'
         },
       ],
@@ -176,7 +189,7 @@ class LevelSelectionScreen extends StatelessWidget {
           'label': 'Silaba (voz)',
           'value': 1,
           'route': 'selection_syllable_voice',
-          'asset': 'assets/images/levels/silaba.png'
+          'asset': 'assets/images/levels/contar.png'
         },
         {
           'label': 'Medio',
@@ -212,13 +225,13 @@ class LevelSelectionScreen extends StatelessWidget {
           'label': 'Fácil',
           'value': 1,
           'route': 'speak_word',
-          'asset': 'assets/images/levels/abecedario.png'
+          'asset': 'assets/images/levels/palabra.png'
         },
         {
           'label': 'Medio',
           'value': 1,
-          'route': 'speak_word',
-          'asset': 'assets/images/levels/silaba.png'
+          'route': 'speak_sentence',
+          'asset': 'assets/images/levels/leer_pictogramas.png'
         },
       ],
     },
