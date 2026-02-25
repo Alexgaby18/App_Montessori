@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:my_montessori/core/theme/animatic_background.dart';
 import 'package:my_montessori/core/constans/list_pitogram.dart';
@@ -19,6 +20,17 @@ class _SpeakSentenceScreenState extends State<SpeakSentenceScreen> {
   late SpeakSentenceController _controller;
   late VoidCallback _controllerListener;
   bool _isUppercase = true;
+  final Map<String, Future<File?>> _pictogramFutureCache = {};
+
+  String _tokenCacheKey(SentencePictograms sentence, TokenPictogram token, int tokenIndex) {
+    final matched = token.match?.text ?? '';
+    return '${sentence.text}|$tokenIndex|${token.token}|$matched';
+  }
+
+  Future<File?> _cachedPictogramFuture(SentencePictograms sentence, TokenPictogram token, int tokenIndex) {
+    final key = _tokenCacheKey(sentence, token, tokenIndex);
+    return _pictogramFutureCache.putIfAbsent(key, token.pictogramFile);
+  }
 
   void _onAdvanceTo(int nextIndex) {
     if (!mounted) return;
@@ -55,6 +67,7 @@ class _SpeakSentenceScreenState extends State<SpeakSentenceScreen> {
   void dispose() {
     _controller.removeListener(_controllerListener);
     _controller.dispose();
+    _pictogramFutureCache.clear();
     super.dispose();
   }
 
@@ -149,10 +162,12 @@ class _SpeakSentenceScreenState extends State<SpeakSentenceScreen> {
                       alignment: WrapAlignment.center,
                       spacing: isTablet ? 60 : 30,
                       runSpacing: isTablet ? 60 : 30,
-                      children: current.tokens.map((t) {
+                      children: current.tokens.asMap().entries.map((entry) {
+                        final tokenIndex = entry.key;
+                        final t = entry.value;
                         final displayWord = _isUppercase ? t.token.toUpperCase() : t.token.toLowerCase();
                         return ButtonPictogramLetters(
-                          pictogramFuture: t.pictogramFile(),
+                          pictogramFuture: _cachedPictogramFuture(current, t, tokenIndex),
                           letters: displayWord,
                           onPressed: () async {},
                           size: sizePictogram,

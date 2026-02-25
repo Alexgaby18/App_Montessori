@@ -28,6 +28,8 @@ class SpeakSentenceController extends ChangeNotifier {
   double get confidence => _confidence;
 
   Timer? _resultTimer;
+  Timer? _silenceTimer;
+  static const Duration _silenceTimeout = Duration(seconds: 4);
   bool _disposed = false;
 
   SpeakSentenceController({
@@ -125,11 +127,15 @@ class SpeakSentenceController extends ChangeNotifier {
     }
 
     _lastResult = '';
+    _resultTimer?.cancel();
+    _silenceTimer?.cancel();
+    _startSilenceTimer();
     _listening = true;
     notifyListeners();
 
     await _speech.listen(
       onResult: (result) {
+        _startSilenceTimer();
         _lastResult = result.recognizedWords;
         _confidence = result.confidence ?? _confidence;
         _level = result.finalResult ? 0.0 : (_speech.isListening ? _level : 0.0);
@@ -140,6 +146,7 @@ class SpeakSentenceController extends ChangeNotifier {
       },
       listenMode: stt.ListenMode.confirmation,
       localeId: 'es_ES',
+      pauseFor: _silenceTimeout,
       onSoundLevelChange: (level) {
         _level = level;
         _safeNotify();
@@ -148,9 +155,18 @@ class SpeakSentenceController extends ChangeNotifier {
   }
 
   Future<void> stopListening() async {
+    _silenceTimer?.cancel();
     await _speech.stop();
     _listening = false;
     _safeNotify();
+  }
+
+  void _startSilenceTimer() {
+    _silenceTimer?.cancel();
+    _silenceTimer = Timer(_silenceTimeout, () async {
+      if (!_speech.isListening || !_listening) return;
+      await stopListening();
+    });
   }
 
   Future<void> _evaluateResult(String recognized) async {
@@ -170,6 +186,7 @@ class SpeakSentenceController extends ChangeNotifier {
       onComplete?.call();
       return;
     } else {
+      await stopListening();
       await AudioService.instance.speak('Intenta de nuevo');
     }
 
@@ -185,6 +202,7 @@ class SpeakSentenceController extends ChangeNotifier {
   void dispose() {
     _disposed = true;
     _resultTimer?.cancel();
+    _silenceTimer?.cancel();
     _speech.stop();
     super.dispose();
   }
