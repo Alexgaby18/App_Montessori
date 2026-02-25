@@ -169,14 +169,6 @@ class _EasyLearnLetterScreenState extends State<EasyLearnLetterScreen> {
                             pictogramFuture: currentLetter.pictogramFile(word),
                             letters: displayWord,
                             onPressed: () {
-                              if (!isUppercase && hasNext) {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => EasyLearnLetterScreen(index: nextIndex, initialIsUppercase: false)),
-                                );
-                                return;
-                              }
-                              // acción por defecto: reproducir palabra (implementa según tu servicio de audio)
                             },
                             size: sizePictogram,
                           );
