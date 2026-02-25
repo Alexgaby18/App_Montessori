@@ -258,11 +258,13 @@ class LevelSelectionScreen extends StatelessWidget {
               builder: (context, constraints) {
                 final isCompactHeight = constraints.maxHeight < 620;
                 final verticalPadding = isCompactHeight ? 16.0 : 32.0;
+                final isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+                final topPadding = isPortrait ? verticalPadding + 32.0 : verticalPadding;
                 final iconSize = isCompactHeight ? 110.0 : 140.0;
                 final gapAfterIcon = isCompactHeight ? 20.0 : 48.0;
 
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: verticalPadding),
+                  padding: EdgeInsets.fromLTRB(16.0, topPadding, 16.0, verticalPadding),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
