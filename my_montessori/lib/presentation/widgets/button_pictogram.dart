@@ -14,6 +14,7 @@ class ButtonPictogram extends StatelessWidget {
   final Color shadowColor;
   final double borderRadius;
   final double elevation;
+  final bool expand;
 
   const ButtonPictogram({
     Key? key,
@@ -29,6 +30,7 @@ class ButtonPictogram extends StatelessWidget {
     this.shadowColor = const Color(0xFFB7C2D7),
     this.borderRadius = 12.0,
     this.elevation = 6.0,
+    this.expand = false,
   }) : super(key: key);
 
   @override
@@ -42,32 +44,29 @@ class ButtonPictogram extends StatelessWidget {
 
       final padding = effectiveSize * 0.08;
 
-      // Hacer que el área completa disponible sea pulsable (útil en tablets)
-      return SizedBox.expand(
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(borderRadius),
-            onTap: onPressed,
-            child: Center(
-              child: SizedBox(
-                width: effectiveSize,
-                height: effectiveSize,
-                child: Material(
-                  color: backgroundColor,
-                  elevation: elevation,
-                  shadowColor: shadowColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(borderRadius),
-                    side: BorderSide(color: borderColor, width: borderWidth),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: Padding(
-                    padding: EdgeInsets.all(padding),
-                    child: FittedBox(
-                      fit: BoxFit.contain,
-                      child: Image.asset(assetPath),
-                    ),
+      final content = Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(borderRadius),
+          onTap: onPressed,
+          child: Center(
+            child: SizedBox(
+              width: effectiveSize,
+              height: effectiveSize,
+              child: Material(
+                color: backgroundColor,
+                elevation: elevation,
+                shadowColor: shadowColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(borderRadius),
+                  side: BorderSide(color: borderColor, width: borderWidth),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: Padding(
+                  padding: EdgeInsets.all(padding),
+                  child: FittedBox(
+                    fit: BoxFit.contain,
+                    child: Image.asset(assetPath),
                   ),
                 ),
               ),
@@ -75,6 +74,12 @@ class ButtonPictogram extends StatelessWidget {
           ),
         ),
       );
+
+      if (expand) {
+        return SizedBox.expand(child: content);
+      }
+
+      return content;
     });
   }
 }

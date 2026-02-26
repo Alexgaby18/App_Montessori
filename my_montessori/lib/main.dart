@@ -1,7 +1,16 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:my_montessori/core/services/pictogram_prefetch_service.dart';
 import 'package:my_montessori/presentation/screens/home.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+  unawaited(PictogramPrefetchService.runOnFirstInstall());
   runApp(const MyApp());
 }
 

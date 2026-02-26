@@ -152,7 +152,7 @@ class _ConnectLetterScreenState extends State<ConnectLetterScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Conecta las letras'),
-        backgroundColor: const Color.fromARGB(255, 68, 194, 193),
+        backgroundColor: const Color.fromARGB(255, 245, 163, 35),
         elevation: 0,
       ),
       body: Stack(

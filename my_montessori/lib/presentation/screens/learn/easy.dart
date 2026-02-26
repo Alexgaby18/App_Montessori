@@ -1,39 +1,49 @@
 import 'package:flutter/material.dart';
-import 'package:my_montessori/core/constans/typography.dart';
 import 'package:my_montessori/presentation/widgets/button_letter.dart';
 import 'package:my_montessori/core/theme/animatic_background.dart';
 import 'package:my_montessori/presentation/widgets/button_pictogram_letter.dart';
 import 'package:my_montessori/core/constans/list_pitogram.dart';
 import 'package:my_montessori/core/services/audio_service.dart';
 
-class LearnLetterScreen extends StatefulWidget {
+class EasyLearnLetterScreen extends StatefulWidget {
   final int index; // index de la letra en la lista `letters`
   final bool initialIsUppercase;
 
-  const LearnLetterScreen({
+  const EasyLearnLetterScreen({
     Key? key,
     required this.index,
     this.initialIsUppercase = true,
   }) : super(key: key);
 
   @override
-  State<LearnLetterScreen> createState() => _LearnLetterScreenState();
+  State<EasyLearnLetterScreen> createState() => _EasyLearnLetterScreenState();
 }
 
-class _LearnLetterScreenState extends State<LearnLetterScreen> {
+class _EasyLearnLetterScreenState extends State<EasyLearnLetterScreen> {
   bool isUppercase = true;
+
+  Future<void> _speakCurrentVowel() async {
+    final currentLetter = vowels[widget.index];
+    final letterToSpeak = isUppercase
+        ? currentLetter.char.toUpperCase()
+        : currentLetter.char.toLowerCase();
+    await AudioService.instance.speakLetter(letterToSpeak);
+  }
 
   @override
   void initState() {
     super.initState();
     isUppercase = widget.initialIsUppercase;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _speakCurrentVowel();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentLetter = letters[widget.index];
+    final currentLetter = vowels[widget.index];
     final bool hasPrev = widget.index > 0;
-    final bool hasNext = widget.index < letters.length - 1;
+    final bool hasNext = widget.index < vowels.length - 1;
     final int prevIndex = widget.index - 1;
     final int nextIndex = widget.index + 1;
     final screenWidth = MediaQuery.of(context).size.width;
@@ -45,7 +55,7 @@ class _LearnLetterScreenState extends State<LearnLetterScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Aprende la letra ${currentLetter.char}'),
+        title: Text('Aprende la Vocal ${currentLetter.char}'),
         backgroundColor: const Color.fromARGB(255, 68, 194, 193),
       ),
       body: Stack(
@@ -114,7 +124,7 @@ class _LearnLetterScreenState extends State<LearnLetterScreen> {
                           color: Color.fromARGB(255, 55, 35, 28),
                           onPressed: () => Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (_) => LearnLetterScreen(index: prevIndex, initialIsUppercase: isUppercase)),
+                            MaterialPageRoute(builder: (_) => EasyLearnLetterScreen(index: prevIndex, initialIsUppercase: isUppercase)),
                           ),
                           icon: Icon(Icons.arrow_back_ios, size: sizeIcon),
                         )
@@ -125,7 +135,7 @@ class _LearnLetterScreenState extends State<LearnLetterScreen> {
                           color: Color.fromARGB(255, 55, 35, 28),
                           onPressed: () => Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (_) => LearnLetterScreen(index: nextIndex, initialIsUppercase: isUppercase)),
+                            MaterialPageRoute(builder: (_) => EasyLearnLetterScreen(index: nextIndex, initialIsUppercase: isUppercase)),
                           ),
                           icon:  Icon(Icons.arrow_forward_ios, size: sizeIcon),
                         )
@@ -137,34 +147,45 @@ class _LearnLetterScreenState extends State<LearnLetterScreen> {
 
                 const SizedBox(height: 10),
 
-                // Lista de pictogramas generada automáticamente desde currentLetter.words
+                // Lista de pictogramas: filtrar para mostrar solo vocales
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Wrap(
-                      alignment: WrapAlignment.center,
-                      spacing: isTablet ? 60 : 30,
-                      runSpacing: isTablet ? 60 : 30,
-                      children: currentLetter.words.map((word) {
-                        final displayWord = isUppercase ? word.toUpperCase() : word.toLowerCase();
-                        return ButtonPictogramLetters(
-                          pictogramFuture: currentLetter.pictogramFile(word),
-                          letters: displayWord,
-                          onPressed: () {
-                            // Si está en minúsculas, avanzar a la siguiente letra manteniendo minúsculas
-                            if (!isUppercase && hasNext) {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(builder: (_) => LearnLetterScreen(index: nextIndex, initialIsUppercase: false)),
-                              );
-                              return;
-                            }
-                            // acción por defecto: reproducir palabra (implementa según tu servicio de audio)
-                          },
-                          size: sizePictogram,
-                        );
-                      }).toList(),
-                    ),
+                    child: Builder(builder: (context) {
+                      // Mostrar las palabras que empiezan por la vocal actual
+                      String _normChar(String ch) {
+                        if (ch.isEmpty) return '';
+                        const accents = 'áéíóúÁÉÍÓÚñÑüÜ';
+                        const replacements = 'aeiouAEIOUnNuU';
+                        final idx = accents.indexOf(ch);
+                        if (idx != -1) return replacements[idx];
+                        return ch;
+                      }
+
+                      final vowelWords = currentLetter.words.where((w) {
+                        final s = w.trim();
+                        if (s.isEmpty) return false;
+                        final first = _normChar(s[0]).toLowerCase();
+                        final letter = _normChar(currentLetter.char).toLowerCase();
+                        return first == letter;
+                      }).toList();
+
+                      return Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: isTablet ? 60 : 30,
+                        runSpacing: isTablet ? 60 : 30,
+                        children: vowelWords.map((word) {
+                          final displayWord = isUppercase ? word.toUpperCase() : word.toLowerCase();
+                          return ButtonPictogramLetters(
+                            pictogramFuture: currentLetter.pictogramFile(word),
+                            letters: displayWord,
+                            onPressed: () {
+                            },
+                            size: sizePictogram,
+                          );
+                        }).toList(),
+                      );
+                    }),
                   ),
                 ),
 

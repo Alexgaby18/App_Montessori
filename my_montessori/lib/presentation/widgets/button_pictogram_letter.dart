@@ -4,7 +4,7 @@ import 'package:my_montessori/core/services/audio_service.dart';
 import 'package:my_montessori/core/constans/typography.dart';
 
 class ButtonPictogramLetters extends StatelessWidget {
-  final Future<File?> pictogramFuture; 
+  final Future<File?> pictogramFuture;
   final double size;
   final VoidCallback onPressed;
   final Color backgroundColor;
@@ -31,6 +31,13 @@ class ButtonPictogramLetters extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textStyle = TextStyle(
+      fontFamily: 'Andika',
+      fontSize: size * 0.15,
+      fontWeight: FontWeight.bold,
+      height: 1.0,
+    );
+
     return SizedBox(
       width: size,
       height: size,
@@ -43,7 +50,7 @@ class ButtonPictogramLetters extends StatelessWidget {
           side: BorderSide(color: borderColor, width: borderWidth),
         ),
         clipBehavior: Clip.antiAlias,
-        child: GestureDetector(
+        child: InkWell(
           onTap: () async {
             // No hablar si se está escuchando (evita hacer trampa en reconocimiento)
             if (!isListening) {
@@ -57,31 +64,43 @@ class ButtonPictogramLetters extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  FutureBuilder<File?>(
-                    future: pictogramFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
-                      } else if (snapshot.hasData && snapshot.data != null) {
-                        return Image.file(
-                          snapshot.data!,
-                          width: size * 0.55,
-                          height: size * 0.55,
-                          fit: BoxFit.contain,
-                        );
-                      } else {
-                        return const Icon(Icons.error, color: Colors.red);
-                      }
-                    },
+                  SizedBox(
+                    width: size * 0.55,
+                    height: size * 0.55,
+                    child: FutureBuilder<File?>(
+                      future: pictogramFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(strokeWidth: 2.0),
+                          );
+                        } else if (snapshot.hasData && snapshot.data != null) {
+                          return Image.file(
+                            snapshot.data!,
+                            width: size * 0.55,
+                            height: size * 0.55,
+                            fit: BoxFit.contain,
+                          );
+                        } else {
+                          return const Icon(Icons.error, color: Colors.red);
+                        }
+                      },
+                    ),
                   ),
-                  const SizedBox(height: 2.0),
-                  RichText(
-                    text: TypographyConstants().coloredText(
-                      letters,
-                      baseStyle: TextStyle(
-                        fontFamily: 'Andika',
-                        fontSize: size * 0.15,
-                        fontWeight: FontWeight.bold,
+                  SizedBox(height: size * 0.08),
+                  SizedBox(
+                    height: size * 0.18,
+                    child: RichText(
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      strutStyle: const StrutStyle(
+                        height: 1.0,
+                        forceStrutHeight: true,
+                      ),
+                      text: TypographyConstants().coloredText(
+                        letters,
+                        baseStyle: textStyle,
                       ),
                     ),
                   ),

@@ -103,7 +103,7 @@ class _SelectionWordScreenState extends State<SelectionWordScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Selecciona la palabra'),
-        backgroundColor: const Color.fromARGB(255, 68, 194, 193),
+        backgroundColor: const Color.fromARGB(255, 234, 155, 184),
         elevation: 0,
       ),
       body: Stack(
