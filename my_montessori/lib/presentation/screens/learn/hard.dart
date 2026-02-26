@@ -235,10 +235,23 @@ class SyllableLearnScreen extends StatefulWidget {
 class _SyllableLearnScreenState extends State<SyllableLearnScreen> {
   bool isUppercase = true;
 
+  Future<void> _speakCurrentSyllable() async {
+    final syllList = syllablesByLetter[widget.letterChar] ?? [];
+    if (widget.syllableIndex < 0 || widget.syllableIndex >= syllList.length) return;
+    final current = syllList[widget.syllableIndex];
+    final syllableToSpeak = isUppercase
+        ? current.char.toUpperCase()
+        : current.char.toLowerCase();
+    await AudioService.instance.speak(syllableToSpeak);
+  }
+
   @override
   void initState() {
     super.initState();
     isUppercase = widget.initialIsUppercase;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _speakCurrentSyllable();
+    });
   }
 
   @override

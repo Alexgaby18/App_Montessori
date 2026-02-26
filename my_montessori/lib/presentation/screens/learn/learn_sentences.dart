@@ -17,10 +17,21 @@ class LearnSentenceScreen extends StatefulWidget {
 class _LearnSentenceScreenState extends State<LearnSentenceScreen> {
   bool isUppercase = true;
 
+  Future<void> _speakCurrentSentence() async {
+    final total = sentencePictograms.length;
+    if (total == 0) return;
+    final currentIndex = widget.index.clamp(0, total - 1);
+    final current = sentencePictograms[currentIndex];
+    await AudioService.instance.speak(current.text);
+  }
+
   @override
   void initState() {
     super.initState();
     isUppercase = widget.initialIsUppercase;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _speakCurrentSentence();
+    });
   }
 
   @override

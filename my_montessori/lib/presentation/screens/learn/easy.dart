@@ -22,10 +22,21 @@ class EasyLearnLetterScreen extends StatefulWidget {
 class _EasyLearnLetterScreenState extends State<EasyLearnLetterScreen> {
   bool isUppercase = true;
 
+  Future<void> _speakCurrentVowel() async {
+    final currentLetter = vowels[widget.index];
+    final letterToSpeak = isUppercase
+        ? currentLetter.char.toUpperCase()
+        : currentLetter.char.toLowerCase();
+    await AudioService.instance.speakLetter(letterToSpeak);
+  }
+
   @override
   void initState() {
     super.initState();
     isUppercase = widget.initialIsUppercase;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _speakCurrentVowel();
+    });
   }
 
   @override
