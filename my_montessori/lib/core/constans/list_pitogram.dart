@@ -444,3 +444,42 @@ Future<void> prefetchAllSentencePictograms({bool onlyMissing = true}) async {
     }
   }
 }
+
+Set<String> _collectAllPictogramKeywords() {
+  final keywords = <String>{};
+
+  void addWord(String word) {
+    final normalized = _normalizeForMatch(word);
+    if (normalized.isNotEmpty) keywords.add(normalized);
+  }
+
+  for (final w in _combinedWords) {
+    addWord(w.text);
+  }
+
+  for (final letterEntries in syllablesByLetter.values) {
+    for (final entry in letterEntries) {
+      for (final word in entry.words) {
+        addWord(word);
+      }
+    }
+  }
+
+  for (final sp in sentencePictograms) {
+    for (final token in sp.tokens) {
+      if (token.match != null) {
+        addWord(token.match!.text);
+      } else {
+        addWord(token.token);
+      }
+    }
+  }
+
+  keywords.addAll(_conjugationOverrides.values);
+  return keywords;
+}
+
+Future<void> prefetchAllAppPictograms() async {
+  final keywords = _collectAllPictogramKeywords().toList();
+  await ArasaacApi.preloadPictograms(keywords);
+}

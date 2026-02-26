@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:my_montessori/core/services/pictogram_prefetch_service.dart';
 import 'package:my_montessori/presentation/screens/home.dart';
 
 Future<void> main() async {
@@ -8,6 +10,7 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  unawaited(PictogramPrefetchService.runOnFirstInstall());
   runApp(const MyApp());
 }
 
