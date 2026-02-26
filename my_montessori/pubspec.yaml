@@ -154,6 +154,7 @@ flutter_icons:
   image_path: "assets/icon/app_icon.png"
   adaptive_icon_background: "#FFAEDCEB"
   adaptive_icon_foreground: "assets/icon/app_icon.png"
+  adaptive_icon_foreground_inset: 18
 
 dependency_overrides:
   flutter_native_splash:
