@@ -112,6 +112,7 @@ class _CompleteSyllablesScreenState extends State<CompleteSyllablesScreen> {
   }
 
   Future<void> _onCorrectComplete() async {
+    await AudioService.instance.speak('¡Muy bien!');
     await AudioService.instance.speak(_word);
     await Future.delayed(const Duration(milliseconds: 700));
     final total = _allSyllableEntries().length;

@@ -60,6 +60,7 @@ class _CompleteFullWordScreenState extends State<CompleteFullWordScreen> {
   }
 
   Future<void> _onCorrectComplete() async {
+    await AudioService.instance.speak('¡Muy bien!');
     await AudioService.instance.speak(_word);
     await Future.delayed(const Duration(milliseconds: 700));
     final hasNext = widget.index < letters.length - 1;

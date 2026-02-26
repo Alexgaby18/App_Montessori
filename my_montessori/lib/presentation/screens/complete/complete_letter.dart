@@ -88,6 +88,7 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
   }
 
   Future<void> _onCorrectComplete() async {
+    await AudioService.instance.speak('¡Muy bien!');
     // Repite la palabra al completar (usa speak para nombre de la palabra)
     await AudioService.instance.speak(_word);
     // breve pausa y avanzar automáticamente a la siguiente letra si existe
