@@ -40,12 +40,24 @@ class SpeakWordController extends ChangeNotifier {
 
   bool get isLastResultCorrect {
     if (_lastResult.isEmpty) return false;
-    final normalizedExpected = _normalize(word.text);
-    final tokens = _lastResult.split(RegExp(r"\s+"))
+    final expectedForms = _equivalentForms(word.text);
+    final tokens = _lastResult
+        .split(RegExp(r"\s+"))
         .map((t) => _normalize(t))
+        .where((t) => t.isNotEmpty)
         .toList();
-    final tokenMatch = tokens.contains(normalizedExpected);
-    final containsMatch = _normalize(_lastResult).contains(normalizedExpected);
+
+    final tokenForms = <String>{};
+    for (final token in tokens) {
+      tokenForms.addAll(_equivalentForms(token));
+    }
+
+    final normalizedRecognized = _normalize(_lastResult);
+    final recognizedForms = _equivalentForms(normalizedRecognized);
+    recognizedForms.addAll(tokenForms);
+
+    final tokenMatch = tokenForms.any(expectedForms.contains);
+    final containsMatch = expectedForms.any((expected) => recognizedForms.any((recognized) => recognized.contains(expected)));
     if (tokenMatch) return true;
 
     // Si confidence está disponible (>= 0) usamos el umbral configurado
@@ -61,12 +73,20 @@ class SpeakWordController extends ChangeNotifier {
 
     // Fallback adicional: comparar por distancia de edición con cada token
     try {
-      if (normalizedExpected.isNotEmpty) {
+      if (expectedForms.isNotEmpty && tokenForms.isNotEmpty) {
         double minNorm = tokens
-            .map((t) {
-              final d = _levenshtein(t, normalizedExpected);
-              final denom = max(t.length, normalizedExpected.length);
-              return denom == 0 ? 0.0 : d / denom;
+            .expand((t) {
+              final tForms = _equivalentForms(t);
+              return expectedForms.map((expected) {
+                final bestForToken = tForms
+                    .map((form) {
+                      final d = _levenshtein(form, expected);
+                      final denom = max(form.length, expected.length);
+                      return denom == 0 ? 0.0 : d / denom;
+                    })
+                    .fold<double>(1.0, (prev, cur) => cur < prev ? cur : prev);
+                return bestForToken;
+              });
             })
             .fold<double>(1.0, (prev, cur) => cur < prev ? cur : prev);
         // aceptar si la distancia normalizada es baja (<= 0.35)
@@ -139,13 +159,123 @@ class SpeakWordController extends ChangeNotifier {
     };
     var out = s;
     map.forEach((k, v) => out = out.replaceAll(k, v));
-    return out.toLowerCase().trim();
+    out = out.toLowerCase();
+    out = out.replaceAll(RegExp(r'[^a-z0-9ñ\s]'), ' ');
+    out = out.replaceAll(RegExp(r'\s+'), ' ').trim();
+    return out;
+  }
+
+  Set<String> _equivalentForms(String text) {
+    final normalized = _normalize(text);
+    if (normalized.isEmpty) return {''};
+
+    final forms = <String>{normalized};
+
+    final asInt = int.tryParse(normalized);
+    if (asInt != null) {
+      final wordForm = _numberToSpanish(asInt);
+      if (wordForm != null && wordForm.isNotEmpty) {
+        forms.add(_normalize(wordForm));
+      }
+    }
+
+    final fromWord = _spanishNumberToInt(normalized);
+    if (fromWord != null) {
+      forms.add(fromWord.toString());
+    }
+
+    return forms;
+  }
+
+  String? _numberToSpanish(int n) {
+    const fixed = <int, String>{
+      0: 'cero',
+      1: 'uno',
+      2: 'dos',
+      3: 'tres',
+      4: 'cuatro',
+      5: 'cinco',
+      6: 'seis',
+      7: 'siete',
+      8: 'ocho',
+      9: 'nueve',
+      10: 'diez',
+      11: 'once',
+      12: 'doce',
+      13: 'trece',
+      14: 'catorce',
+      15: 'quince',
+      16: 'dieciseis',
+      17: 'diecisiete',
+      18: 'dieciocho',
+      19: 'diecinueve',
+      20: 'veinte',
+      21: 'veintiuno',
+      22: 'veintidos',
+      23: 'veintitres',
+      24: 'veinticuatro',
+      25: 'veinticinco',
+      26: 'veintiseis',
+      27: 'veintisiete',
+      28: 'veintiocho',
+      29: 'veintinueve',
+    };
+
+    if (fixed.containsKey(n)) return fixed[n];
+    if (n == 30) return 'treinta';
+    return null;
+  }
+
+  int? _spanishNumberToInt(String value) {
+    const map = <String, int>{
+      'cero': 0,
+      'uno': 1,
+      'un': 1,
+      'dos': 2,
+      'tres': 3,
+      'cuatro': 4,
+      'cinco': 5,
+      'seis': 6,
+      'siete': 7,
+      'ocho': 8,
+      'nueve': 9,
+      'diez': 10,
+      'once': 11,
+      'doce': 12,
+      'trece': 13,
+      'catorce': 14,
+      'quince': 15,
+      'dieciseis': 16,
+      'diecisiete': 17,
+      'dieciocho': 18,
+      'diecinueve': 19,
+      'veinte': 20,
+      'veintiuno': 21,
+      'veintiun': 21,
+      'veintidos': 22,
+      'veintitres': 23,
+      'veinticuatro': 24,
+      'veinticinco': 25,
+      'veintiseis': 26,
+      'veintisiete': 27,
+      'veintiocho': 28,
+      'veintinueve': 29,
+      'treinta': 30,
+    };
+
+    return map[_normalize(value)];
   }
 
   bool _matches(String recognized, String expected) {
-    final r = _normalize(recognized);
-    final e = _normalize(expected);
-    return r.contains(e) || r == e;
+    final recognizedForms = _equivalentForms(recognized);
+    final expectedForms = _equivalentForms(expected);
+
+    for (final r in recognizedForms) {
+      for (final e in expectedForms) {
+        if (r == e || r.contains(e)) return true;
+      }
+    }
+    return false;
   }
 
   Future<void> startListening() async {

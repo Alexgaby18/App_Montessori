@@ -74,7 +74,7 @@ class _SelectionSyllableVoiceScreenState extends State<SelectionSyllableVoiceScr
     final displaySyllable = _isUppercase
         ? _currentEntry.char.toUpperCase()
         : _currentEntry.char.toLowerCase();
-    AudioService.instance.speak('Selecciona la silaba $displaySyllable');
+    AudioService.instance.speak('Selecciona la sílaba $displaySyllable');
   }
 
   Future<void> _onOptionPressed(Letter selected) async {
@@ -104,7 +104,7 @@ class _SelectionSyllableVoiceScreenState extends State<SelectionSyllableVoiceScr
             ),
           );
         } else {
-          await AudioService.instance.speak('Has completado todas las silabas');
+          await AudioService.instance.speak('Has completado todas las sílabas');
           if (mounted) Navigator.pop(context);
         }
       } finally {
@@ -118,11 +118,11 @@ class _SelectionSyllableVoiceScreenState extends State<SelectionSyllableVoiceScr
     if (_syllableEntries.isEmpty) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Selecciona la silaba'),
+          title: const Text('Selecciona la sílaba'),
           backgroundColor: const Color.fromARGB(255, 234, 155, 184),
           elevation: 0,
         ),
-        body: const Center(child: Text('No hay silabas definidas')),
+        body: const Center(child: Text('No hay sílabas definidas')),
       );
     }
 
@@ -132,7 +132,7 @@ class _SelectionSyllableVoiceScreenState extends State<SelectionSyllableVoiceScr
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Selecciona la silaba'),
+        title: const Text('Selecciona la sílaba'),
         backgroundColor: const Color.fromARGB(255, 234, 155, 184),
         elevation: 0,
       ),

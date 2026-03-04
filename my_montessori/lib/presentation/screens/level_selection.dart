@@ -180,13 +180,13 @@ class LevelSelectionScreen extends StatelessWidget {
           'asset': 'assets/images/levels/abecedario.png'
         },
         {
-          'label': 'Silaba',
+          'label': 'Sílaba',
           'value': 1,
           'route': 'selection_syllable',
           'asset': 'assets/images/levels/silaba.png'
         },
         {
-          'label': 'Silaba (voz)',
+          'label': 'Sílaba (voz)',
           'value': 1,
           'route': 'selection_syllable_voice',
           'asset': 'assets/images/levels/contar.png'

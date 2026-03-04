@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:my_montessori/core/theme/animatic_background.dart';
 import 'package:my_montessori/presentation/widgets/button_pictogram.dart';
+import 'package:my_montessori/presentation/widgets/credits_info_button.dart';
 import 'package:my_montessori/presentation/screens/level_selection.dart';
 
 class Home extends StatelessWidget {
@@ -165,6 +166,13 @@ class Home extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+            ),
+            const Positioned(
+              right: 16,
+              bottom: 16,
+              child: SafeArea(
+                child: CreditsInfoButton(),
               ),
             ),
           ],

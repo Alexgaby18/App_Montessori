@@ -161,14 +161,14 @@ class _ConnectSyllableScreenState extends State<ConnectSyllableScreen> {
 
     if (_syllableEntries.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Relaciona silabas y pictogramas')),
-        body: const Center(child: Text('No hay silabas definidas')),
+        appBar: AppBar(title: const Text('Relaciona sílabas y pictogramas')),
+        body: const Center(child: Text('No hay sílabas definidas')),
       );
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Conecta silabas'),
+        title: const Text('Conecta sílabas'),
         backgroundColor: const Color.fromARGB(255, 245, 163, 35),
         elevation: 0,
       ),
@@ -356,7 +356,7 @@ class _ConnectSyllableScreenState extends State<ConnectSyllableScreen> {
                   iconSize: 44,
                   color: const Color.fromARGB(255, 55, 35, 28),
                   onPressed: () {
-                    AudioService.instance.speak('Une las silabas con los pictogramas');
+                    AudioService.instance.speak('Une las sílabas con los pictogramas');
                   },
                 ),
               ],

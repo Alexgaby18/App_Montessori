@@ -102,6 +102,8 @@ flutter:
     - assets/images/levels/vocales.png
     - assets/images/levels/leer_pictogramas.png
     - assets/images/levels/primera.png
+    - assets/images/pictogram_menu/informacion.png
+    - assets/images/pictogram_menu/informacion_1.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

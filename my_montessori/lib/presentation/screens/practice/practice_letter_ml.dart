@@ -319,7 +319,7 @@ class _PracticeLetterScreenMLState extends State<PracticeLetterScreenML> {
     final template = _letterTemplatePoints(targetLetter);
     final drawn = _mergeAndNormalizeStrokes(_strokes, template.length);
     final score = DrawingUtils.dtwDistance(template, drawn);
-    return score >= 0.62;
+    return score >= 0.70;
   }
 
   bool _areLettersSimilar(String recognized, String target) {

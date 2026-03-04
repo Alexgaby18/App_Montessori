@@ -94,7 +94,7 @@ class _SelectionSyllableScreenState extends State<SelectionSyllableScreen> {
             MaterialPageRoute(builder: (_) => SelectionSyllableScreen(index: nextIndex, initialIsUppercase: _isUppercase)),
           );
         } else {
-          await AudioService.instance.speak('¡Has completado todas las silabas!');
+          await AudioService.instance.speak('¡Has completado todas las sílabas!');
           if (mounted) Navigator.pop(context);
         }
       } finally {
@@ -112,11 +112,11 @@ class _SelectionSyllableScreenState extends State<SelectionSyllableScreen> {
     if (_syllableEntries.isEmpty) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Selecciona la silaba'),
+          title: const Text('Selecciona la sílaba'),
           backgroundColor: const Color.fromARGB(255, 234, 155, 184),
           elevation: 0,
         ),
-        body: const Center(child: Text('No hay silabas definidas')),
+        body: const Center(child: Text('No hay sílabas definidas')),
       );
     }
 
@@ -134,7 +134,7 @@ class _SelectionSyllableScreenState extends State<SelectionSyllableScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Selecciona la silaba'),
+        title: const Text('Selecciona la sílaba'),
         backgroundColor: const Color.fromARGB(255, 234, 155, 184),
         elevation: 0,
       ),
@@ -161,7 +161,7 @@ class _SelectionSyllableScreenState extends State<SelectionSyllableScreen> {
                   iconSize: 44,
                   color: const Color.fromARGB(255, 55, 35, 28),
                   onPressed: () {
-                    AudioService.instance.speak('Selecciona la silaba $displaySyllable');
+                    AudioService.instance.speak('Selecciona la sílaba $displaySyllable');
                   },
                 ),
               ],
