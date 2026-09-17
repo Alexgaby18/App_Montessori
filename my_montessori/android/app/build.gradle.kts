@@ -10,8 +10,18 @@ plugins {
 
 val keystorePropertiesFile = rootProject.file("key.properties")
 val keystoreProperties = Properties()
-if (keystorePropertiesFile.exists()) {
+val hasReleaseSigningConfig = keystorePropertiesFile.exists()
+if (hasReleaseSigningConfig) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
+val requiredKeystoreProperties = listOf("keyAlias", "keyPassword", "storeFile", "storePassword")
+if (hasReleaseSigningConfig) {
+    val missingKeystoreProperties =
+        requiredKeystoreProperties.filter { keystoreProperties.getProperty(it).isNullOrBlank() }
+    check(missingKeystoreProperties.isEmpty()) {
+        "key.properties is missing required properties: ${missingKeystoreProperties.joinToString()}"
+    }
 }
 
 android {
@@ -40,18 +50,21 @@ android {
     }
 
     signingConfigs {
-        create("release") {
-            keyAlias = keystoreProperties.getProperty("keyAlias") ?: "app_key"
-            keyPassword = keystoreProperties.getProperty("keyPassword") ?: ""
-            storeFile = file(keystoreProperties.getProperty("storeFile") ?: "app/my-release-key.jks")
-            storePassword = keystoreProperties.getProperty("storePassword") ?: ""
+        if (hasReleaseSigningConfig) {
+            create("release") {
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+                storeFile = rootProject.file(keystoreProperties.getProperty("storeFile"))
+                storePassword = keystoreProperties.getProperty("storePassword")
+            }
         }
     }
 
     buildTypes {
         release {
-            // Use the release signing config when available.
-            signingConfig = signingConfigs.getByName("release")
+            if (hasReleaseSigningConfig) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 }
