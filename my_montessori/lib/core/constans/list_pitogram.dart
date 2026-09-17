@@ -219,28 +219,34 @@ const Map<String, List<Letter>> syllablesByLetter = {
 
   // Lista de oraciones simples en español (frases cortas proporcionadas)
   const List<String> simpleSentences = [
-    'Yo leo.',
-    'El Bebé llora.',
-    'Mamá me ama.',
-    'Papá huele la flor.',
-    'El sapo salta.',
-    'El león come carne.',
-    'La abeja vuela.',
-    'El árbol verde.',
-    'Mi barco azul.',
-    'Veo la luna.',
-    'Estoy feliz.',
-    'Bebo jugo.',
-    'Mira ese oso.',
-    'Soplo la vela.',
-    'El helado frío.',
-    'Beso a mi mamá.',
-    'El gato de mi mamá.',
-    'El perro duerme.',
-    'El pollito dice pío.',
-    'Mi papá trabaja.',
-    'Yo uso gafas.',
-  ];
+  // --- NIVEL 1: Oraciones cortas (3 palabras) ---
+  'El niño salta.',
+  'El bebé llora.',
+  'Yo estoy contento.',
+  'Yo bebo leche.',
+  'La niña está triste.',
+
+  // --- NIVEL 2: Estructura simple (4 palabras) ---
+  'El león come carne.',
+  'Papá huele la flor.',
+  'La niña pinta una vaca.',
+  'Mamá nada en el mar.',
+  'Yo beso a mi hermana.',
+
+  // --- NIVEL 3: Estructura con complementos o más elementos (5 a 6 palabras) ---
+  'El niño baila con la niña.',
+  'El gato sube al árbol.',
+  'La mamá mira la tele.',
+  'Los niños quieren jugar.',
+  'La oveja anda por el campo.',
+  'El pájaro está en el árbol.',
+  'Yo escribo en el cuaderno.',
+  'Yo me levanto de la cama.',
+  'Las niñas dibujan un sol.',
+  'Papá acaricia al perro.',
+  'A mi hermana le gusta el yogurt.',
+  'Las niñas juegan con los juguetes.',
+];
 
 // --- Mapeo por token: cada palabra de la oración intenta asociarse a un `Word` ---
 
@@ -265,7 +271,6 @@ const Map<String, String> _conjugationOverrides = {
   'huele': 'oler',
   'huelo': 'oler',
   'huelen': 'oler',
-  'bebe': 'beber',
   'bebo': 'beber',
   'beben': 'beber',
   'come': 'comer',
@@ -285,6 +290,34 @@ const Map<String, String> _conjugationOverrides = {
   'subo': 'subir',
   'brilla': 'brillar',
   'brillo': 'brillar',
+  'juega': 'jugar',
+  'juegan': 'jugar',
+  'estan': 'estar',
+  'estoy': 'estar',
+  'quiero': 'querer',
+  'quieren': 'desear', // desambiguación: "querer" como deseo en la frase de jugar
+  'mira': 'mirar',
+  'baila': 'bailar',
+  'dibuja': 'dibujar',
+  'sale': 'salir',
+  'salen': 'salir',
+  'va': 'ir',
+  'van': 'ir',
+  'toca': 'tocar',
+  'toco': 'tocar',
+  'baja': 'bajar',
+  'cantan': 'cantar',
+  'canta': 'cantar',
+  'apaga': 'apagar',
+  'lava': 'lavar',
+  'pinta': 'pintar',
+  'acaricio': 'acariciar',
+  'acaricia': 'acariciar',
+  'nada': 'nadar',
+  'salta': 'saltar',
+  'corre': 'correr',
+  'lavo': 'lavar',
+  'anda': 'andar',
 };
 
 List<String> _generateInfinitiveCandidates(String normToken) {
@@ -343,13 +376,13 @@ List<String> _generateInfinitiveCandidates(String normToken) {
 class TokenPictogram {
   final String token; // palabra original tal como aparece en la oración
   final Word? match; // Word asociado si se encontró
-  const TokenPictogram({required this.token, this.match});
+  final String? searchKey; // término real para buscar en Arasaac sin artículos
+  const TokenPictogram({required this.token, this.match, this.searchKey});
 
   Future<File?> pictogramFile() async {
-    if (match != null) return await match!.pictogramFile();
-    // Fallback: buscar directamente en la API de Arasaac usando el token
-    final slug = _normalizeForMatch(token);
-    // Si hay una forma irregular conocida, priorizar el infinitivo
+    final query = searchKey ?? token;
+    final slug = _normalizeForMatch(query);
+
     final override = _conjugationOverrides[slug];
     if (override != null) {
       final overrideFile = await ArasaacApi.fetchPictogram(override);
@@ -359,20 +392,22 @@ class TokenPictogram {
     File? file = await ArasaacApi.fetchPictogram(slug);
     if (file != null) return file;
 
-    // Si no se encuentra con la forma tal cual, generar candidatos de infinitivo
-    // (reglas heurísticas + mapa de excepciones) y probarlos en la API.
+    if (match != null) {
+      final matchFile = await match!.pictogramFile();
+      if (matchFile != null) return matchFile;
+    }
+
     final candidates = _generateInfinitiveCandidates(slug);
     for (final c in candidates) {
       file = await ArasaacApi.fetchPictogram(c);
       if (file != null) return file;
     }
 
-    // No se encontró pictograma
     return null;
   }
 
   @override
-  String toString() => 'TokenPictogram(token: $token, match: ${match?.text})';
+  String toString() => 'TokenPictogram(token: $token, match: ${match?.text}, searchKey: $searchKey)';
 }
 
 class SentencePictograms {
@@ -391,8 +426,18 @@ final List<Word> _combinedWords = [...words, ...vowelWords, ...syllableWords];
 final RegExp _wordRegex = RegExp(r"[A-Za-zÁÉÍÓÚáéíóúÑñÜü]+", unicode: true);
 
 final Set<String> _articles = {
-  'el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'mi', 'mis', 'tu', 'tus', 'su', 'sus', 'lo'
+  'el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'mi', 'mis', 'tu', 'tus', 'su', 'sus', 'lo',
+  'a', 'de', 'por', 'con', 'en', 'al', 'del', 'y'
 };
+
+bool _isArticleToken(String token) => _articles.contains(_normalizeForMatch(token));
+
+List<String> resolveInfinitiveCandidates(String rawToken) {
+  final normalized = _normalizeForMatch(rawToken);
+  if (normalized.isEmpty) return const <String>[];
+  final candidates = _generateInfinitiveCandidates(normalized);
+  return candidates.toSet().toList();
+}
 
 final List<SentencePictograms> sentencePictograms = simpleSentences.map((s) {
   final matches = _wordRegex.allMatches(s);
@@ -410,20 +455,46 @@ final List<SentencePictograms> sentencePictograms = simpleSentences.map((s) {
     tokens.add(TokenPictogram(token: tokenOriginal, match: found));
   }
 
-  // Post-proceso: fusionar artículo + sustantivo cuando el sustantivo tiene match
+  // Post-proceso: fusionar solo grupos mínimos, nunca más de dos tokens en un mismo pictograma.
   final merged = <TokenPictogram>[];
   for (int i = 0; i < tokens.length; i++) {
     final t = tokens[i];
-    final norm = _normalizeForMatch(t.token);
-    if (_articles.contains(norm) && i + 1 < tokens.length) {
-      final next = tokens[i + 1];
-      if (next.match != null) {
-        // Fusionar: token visual será 'artículo sustantivo', match apunta al sustantivo
-        merged.add(TokenPictogram(token: '${t.token} ${next.token}', match: next.match));
-        i++; // saltar el siguiente porque ya fue consumido
-        continue;
-      }
+    final currNorm = _normalizeForMatch(t.token);
+    final next = i + 1 < tokens.length ? tokens[i + 1] : null;
+    final nextNorm = next != null ? _normalizeForMatch(next.token) : '';
+
+    // artículo + sustantivo -> un único pictograma corto
+    if (_articles.contains(currNorm) && next != null && !_articles.contains(nextNorm)) {
+      final searchKey = next.match?.text ?? next.token;
+      merged.add(TokenPictogram(token: '${t.token} ${next.token}', match: next.match, searchKey: searchKey));
+      i++;
+      continue;
     }
+
+    // preposición + artículo -> unir solo este par; dejar el sustantivo como siguiente pictograma
+    if (['a', 'de', 'por', 'con', 'en'].contains(currNorm) && next != null && _articles.contains(nextNorm)) {
+      final searchKey = next.match?.text ?? next.token;
+      merged.add(TokenPictogram(token: '${t.token} ${next.token}', match: next.match, searchKey: searchKey));
+      i++;
+      continue;
+    }
+
+    // preposición + sustantivo (sin artículo) -> también puede ir junto
+    if (['a', 'de', 'por', 'con', 'en'].contains(currNorm) && next != null && !_articles.contains(nextNorm)) {
+      final searchKey = next.match?.text ?? next.token;
+      merged.add(TokenPictogram(token: '${t.token} ${next.token}', match: next.match, searchKey: searchKey));
+      i++;
+      continue;
+    }
+
+    // contracciones tipo al/del + sustantivo -> par muy corto
+    if ((currNorm == 'al' || currNorm == 'del') && next != null && !_articles.contains(nextNorm)) {
+      final searchKey = next.match?.text ?? next.token;
+      merged.add(TokenPictogram(token: '${t.token} ${next.token}', match: next.match, searchKey: searchKey));
+      i++;
+      continue;
+    }
+
     merged.add(t);
   }
 
