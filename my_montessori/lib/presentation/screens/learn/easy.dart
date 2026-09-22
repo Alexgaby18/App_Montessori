@@ -51,6 +51,7 @@ class _EasyLearnLetterScreenState extends State<EasyLearnLetterScreen> {
     final sizeButtonLetter = isTablet ? 280.0 : 180.0;
     final sizePictogram = isTablet ? 220.0 : 120.0;
     final sizeIcon = isTablet ? 48.0 : 24.0;
+    final columns = 2;
     String displayChar() => isUppercase ? currentLetter.char.toUpperCase() : currentLetter.char.toLowerCase();
 
     return Scaffold(
@@ -172,8 +173,8 @@ class _EasyLearnLetterScreenState extends State<EasyLearnLetterScreen> {
 
                       return Wrap(
                         alignment: WrapAlignment.center,
-                        spacing: isTablet ? 60 : 30,
-                        runSpacing: isTablet ? 60 : 30,
+                        spacing: isTablet ? 80 : 30,
+                        runSpacing: isTablet ? 80 : 30,
                         children: vowelWords.map((word) {
                           final displayWord = isUppercase ? word.toUpperCase() : word.toLowerCase();
                           return ButtonPictogramLetters(

@@ -67,7 +67,23 @@ class ArasaacApi {
       final List<dynamic> pictogramas = jsonDecode(searchResponse.body);
       if (pictogramas.isEmpty) return null;
 
-      final pictogramId = pictogramas[0]["_id"];
+      final exactIndex = pictogramas.indexWhere((pictograma) {
+        final keywords = pictograma['keywords'];
+        if (keywords is List) {
+          for (final keyword in keywords) {
+            if (keyword is Map && keyword['keyword'] != null) {
+              final candidate = _canonicalKeyword(keyword['keyword']);
+              if (candidate == canonicalKeyword) return true;
+            }
+          }
+        }
+        final name = pictograma['keyword'] ?? pictograma['name'] ?? pictograma['text'];
+        if (name is String && _canonicalKeyword(name) == canonicalKeyword) return true;
+        return false;
+      });
+
+      final selected = exactIndex >= 0 ? pictogramas[exactIndex] : pictogramas[0];
+      final pictogramId = selected["_id"];
       if (pictogramId == null) return null;
 
       final imageUrl = Uri.parse("https://api.arasaac.org/v1/pictograms/$pictogramId?download=true");

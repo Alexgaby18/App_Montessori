@@ -260,8 +260,9 @@ class LevelSelectionScreen extends StatelessWidget {
                 final verticalPadding = isCompactHeight ? 16.0 : 32.0;
                 final isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
                 final topPadding = isPortrait ? verticalPadding + 32.0 : verticalPadding;
-                final iconSize = isCompactHeight ? 110.0 : 140.0;
+                final iconSize = isCompactHeight ? 110.0 : 200.0;
                 final gapAfterIcon = isCompactHeight ? 20.0 : 48.0;
+                
 
                 return Padding(
                   padding: EdgeInsets.fromLTRB(16.0, topPadding, 16.0, verticalPadding),
@@ -296,7 +297,7 @@ class LevelSelectionScreen extends StatelessWidget {
                                 mainAxisSpacing: 12,
                                 childAspectRatio: isCompactHeight ? 1.1 : 1.2,
                                 children: levelList.map((level) {
-                                  return _buildLevelCard(context, level);
+                                  return _buildLevelCard(context, level, constraints);
                                 }).toList(),
                               ),
                       ),
@@ -311,11 +312,13 @@ class LevelSelectionScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLevelCard(BuildContext context, Map<String, dynamic> level) {
+  Widget _buildLevelCard(BuildContext context, Map<String, dynamic> level, constraints) {
+    final isCompactHeight = constraints.maxHeight < 620;
     final label = level['label']?.toString() ?? level['value'].toString();
     final value = level['value'];
     final asset = level['asset'] as String?;
     final route = level['route'] as String?;
+    final buttonSize = isCompactHeight ? 100.0 : 200.0;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -327,7 +330,7 @@ class LevelSelectionScreen extends StatelessWidget {
           children: [
             ButtonPictogram(
               assetPath: asset ?? '',
-              size: 120.0,
+              size: buttonSize,
               backgroundColor: Colors.white,
               onPressed: () => _onLevelSelected(context, level),
             ),

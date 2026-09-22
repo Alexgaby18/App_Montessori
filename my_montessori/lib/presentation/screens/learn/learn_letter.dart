@@ -153,8 +153,8 @@ class _LearnLetterScreenState extends State<LearnLetterScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Wrap(
                       alignment: WrapAlignment.center,
-                      spacing: isTablet ? 60 : 30,
-                      runSpacing: isTablet ? 60 : 30,
+                      spacing: isTablet ? 80 : 30,
+                      runSpacing: isTablet ? 80 : 30,
                       children: currentLetter.words.map((word) {
                         final displayWord = isUppercase ? word.toUpperCase() : word.toLowerCase();
                         return ButtonPictogramLetters(

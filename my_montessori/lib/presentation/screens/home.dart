@@ -13,7 +13,8 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isTablet = screenWidth > 600; // threshold ajustable
-    final logoSize = isTablet ? 220.0 : 140.0;
+    final logoSize = isTablet ? 200.0 : 140.0;
+    final marginBottom = isTablet ? 0.0 : 40.0;
 
     return Scaffold(
         body: Stack(
@@ -25,7 +26,7 @@ class Home extends StatelessWidget {
                 children: [
                   // Logo en la parte superior centrado
                   Container(
-                    margin: const EdgeInsets.only(top: 40.0, bottom: 40.0),
+                    margin: EdgeInsets.only(top: 40.0, bottom: marginBottom),
                     child: SvgPicture.asset(
                       'assets/svg/Logo.svg', // Ajusta la ruta según tu logo
                       width: logoSize,
@@ -40,10 +41,10 @@ class Home extends StatelessWidget {
                       builder: (context, constraints) {
                         final screenWidth = MediaQuery.of(context).size.width;
                         final isTablet = screenWidth > 600; // threshold ajustable
-                        final horizontalPadding = isTablet ? 100.0 : 40.0;
-                        final spacing = isTablet ? 80.0 : 40.0;
+                        final horizontalPadding = isTablet ? 80.0 : 40.0;
+                        final spacing = isTablet ? 0.0 : 40.0;
                         final columns = 2;
-                        final buttonSize = isTablet ? 220.0 : 120.0;
+                        final buttonSize = isTablet ? 200.0 : 120.0;
 
                         return GridView.count(
                           crossAxisCount: columns,
