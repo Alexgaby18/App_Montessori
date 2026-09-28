@@ -82,7 +82,7 @@ class _SelectionSyllableScreenState extends State<SelectionSyllableScreen> {
       try {
         await AudioService.instance.speak('¡Muy bien!');
         await Future.delayed(const Duration(milliseconds: 800));
-        await AudioService.instance.speak(displaySyllable); // repetir la silaba
+        await AudioService.instance.speakSyllable(displaySyllable);
         // avanzar automaticamente despues de una pausa corta
         await Future.delayed(const Duration(milliseconds: 600));
         final hasNext = _entryIndex < _syllableEntries.length - 1;
@@ -103,7 +103,7 @@ class _SelectionSyllableScreenState extends State<SelectionSyllableScreen> {
     } else {
       // incorrecto: solo dar feedback de audio, sin bloquear ni atenuar toda la UI
       final selectedSyllable = _isUppercase ? selected.char.toUpperCase() : selected.char.toLowerCase();
-      await AudioService.instance.speak(selectedSyllable);
+      await AudioService.instance.speakSyllable(selectedSyllable);
     }
   }
 

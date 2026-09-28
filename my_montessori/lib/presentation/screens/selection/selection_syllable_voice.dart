@@ -85,7 +85,7 @@ class _SelectionSyllableVoiceScreenState extends State<SelectionSyllableVoiceScr
       try {
         await AudioService.instance.speak('Muy bien');
         await Future.delayed(const Duration(milliseconds: 600));
-        await AudioService.instance.speak(_isUppercase
+        await AudioService.instance.speakSyllable(_isUppercase
             ? _currentEntry.char.toUpperCase()
             : _currentEntry.char.toLowerCase());
 

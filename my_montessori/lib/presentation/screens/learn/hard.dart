@@ -242,7 +242,7 @@ class _SyllableLearnScreenState extends State<SyllableLearnScreen> {
     final syllableToSpeak = isUppercase
         ? current.char.toUpperCase()
         : current.char.toLowerCase();
-    await AudioService.instance.speak(syllableToSpeak);
+    await AudioService.instance.speakSyllable(syllableToSpeak);
   }
 
   @override

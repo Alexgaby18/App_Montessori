@@ -135,7 +135,7 @@ class _ConnectSyllableScreenState extends State<ConnectSyllableScreen> {
     final displaySyllable = _isUppercase ? entry.char.toUpperCase() : entry.char.toLowerCase();
     final wordText = _getEntryWord(entryIdx);
 
-    await AudioService.instance.speak(displaySyllable);
+    await AudioService.instance.speakSyllable(displaySyllable);
     await Future.delayed(const Duration(milliseconds: 200));
     if (wordText.isNotEmpty) {
       await AudioService.instance.speak(wordText);

@@ -1,0 +1,151 @@
+PRIVACY POLICY FOR MI MONTESSORI
+
+Effective date: September 22, 2026
+
+This Privacy Policy explains how Alex Contreras ("Service Provider", "we", "us", or "our") handles information in the Mi Montessori mobile application (the "Application").
+
+Mi Montessori is an educational application designed to support children's learning through activities involving letters, words, pictograms, pronunciation, speech recognition, and handwriting practice.
+
+1. INFORMATION WE COLLECT
+
+Mi Montessori does not require users to create an account and does not directly request names, email addresses, telephone numbers, contacts, precise location, payment information, or other profile information.
+
+The Application may process the following information when specific features are used.
+
+Microphone and speech recognition
+
+The Application requests access to the device microphone when the user uses speech-related activities.
+
+The microphone is used to support speech recognition and pronunciation exercises. The Application receives the speech-recognition result required for the activity. The Application does not continuously record audio in the background and does not provide a general-purpose audio recording feature.
+
+Speech recognition may be provided by the operating system or by a third-party speech-recognition service configured on the device. Depending on the device, operating system, and service provider, audio or speech data may be processed on the device or transmitted to that provider. That processing is governed by the applicable privacy policy of the speech-recognition provider.
+
+The Service Provider does not use speech data for advertising or profiling.
+
+Handwriting recognition
+
+The Application uses Google ML Kit Digital Ink Recognition to recognize handwriting strokes entered during handwriting activities.
+
+The Application may download language models required for this feature. Handwriting recognition is intended to be performed on the device after the required model is available. The Service Provider does not operate a server that stores handwriting strokes.
+
+Google ML Kit may process information according to Google's applicable terms and privacy documentation.
+
+Pictograms and ARASAAC
+
+The Application may connect to the ARASAAC service to search for and download pictograms.
+
+When this feature is used, the Application sends a normalized word or search term to the ARASAAC API. Downloaded pictogram images may be stored locally in the Application's private storage so they can be reused without downloading them again.
+
+The Service Provider does not send user names, email addresses, contacts, or account information to ARASAAC through the Application. ARASAAC and its infrastructure may process technical information such as an IP address as part of providing its web service. This processing is subject to ARASAAC's own terms and privacy practices.
+
+Pictograms are used in accordance with the applicable ARASAAC licensing and attribution requirements.
+
+Local application data
+
+The Application may store downloaded pictograms, language models, and technical files in the Application's private storage on the device.
+
+This information is not intended to identify the user personally and is normally removed when the Application is uninstalled or when its application data is cleared through the device settings.
+
+2. INFORMATION WE DO NOT COLLECT DIRECTLY
+
+The Service Provider does not currently operate user accounts or a personal-data server for Mi Montessori.
+
+The Application does not intentionally collect or store directly:
+
+- Names or surnames;
+- Email addresses;
+- Telephone numbers;
+- Contacts;
+- Precise location;
+- Photos or videos;
+- Payment information;
+- Health information;
+- Advertising identifiers for personalized advertising;
+- User profiles or behavioral advertising data.
+
+The Application does not contain advertising or an advertising SDK.
+
+3. INTERNET CONNECTIONS AND THIRD-PARTY SERVICES
+
+The Application uses secure Internet connections when it needs to:
+
+- Search for or download pictograms from ARASAAC;
+- Download Google ML Kit handwriting-recognition models when required;
+- Use speech-recognition services provided by the device or operating system.
+
+Third-party services may receive technical information necessary to provide their services, such as network information, device information, or IP address. Those services process information under their own privacy policies.
+
+The Service Provider does not sell personal information and does not use information from Mi Montessori for targeted advertising.
+
+4. COOKIES AND TRACKING TECHNOLOGIES
+
+The mobile Application does not intentionally use browser cookies, advertising pixels, or cross-application tracking technologies.
+
+Third-party services used by the Application may process technical information according to their own technologies and privacy policies.
+
+5. DATA RETENTION
+
+The Service Provider does not maintain a user account database for Mi Montessori.
+
+Information stored locally by the Application, such as downloaded pictograms and handwriting-recognition models, remains on the device until it is deleted by the Application, the user, or the device operating system.
+
+Speech-recognition providers, Google ML Kit, and ARASAAC may retain or process information according to their own policies and applicable law. The Service Provider does not control or determine the retention periods of those third-party services.
+
+6. CHILDREN'S PRIVACY
+
+Mi Montessori is an educational application intended for use by children and their parents, guardians, educators, or schools.
+
+The Application does not require children to create an account or provide personal information such as their name, email address, telephone number, or location.
+
+Microphone access is requested only when required for speech-related educational activities. Parents or legal guardians should supervise children's use of microphone-based features and review the privacy practices of the speech-recognition provider available on the device.
+
+The Service Provider does not knowingly sell children's personal information, use children's information for targeted advertising, or create advertising profiles.
+
+Where required by applicable law, parents or legal guardians should provide consent for the use of features that process voice or other information through third-party services.
+
+The Application is intended to comply with applicable Google Play Families requirements. The Application does not contain advertisements.
+
+7. SECURITY
+
+The Service Provider takes reasonable measures to protect information handled by the Application.
+
+The Application uses the device's private application storage for locally cached files and uses HTTPS connections for the external services it accesses where HTTPS is available.
+
+However, no method of electronic transmission or storage is completely secure. The Service Provider cannot guarantee absolute security of information processed by third-party providers or transmitted over the Internet.
+
+8. YOUR CHOICES AND RIGHTS
+
+You may:
+
+- Deny microphone permission through the device settings;
+- Stop using speech-related features;
+- Delete the Application's local data through the device settings;
+- Uninstall the Application;
+- Contact us with questions or requests regarding privacy.
+
+Because the Service Provider does not maintain a user account database or a personal-data server for the Application, there may be no user profile or account data held by the Service Provider to access, correct, or delete.
+
+Requests concerning information processed by Google, the device operating system, speech-recognition providers, or ARASAAC must be directed to the relevant provider where applicable.
+
+To contact us, use:
+
+Email: alex1819.dev@gmail.com
+
+9. INTERNATIONAL DATA TRANSFERS
+
+Third-party services used by the Application may process information in countries other than the user's country of residence.
+
+Those services are responsible for applying the safeguards required by applicable law for their own processing activities. Users should review the privacy policies of the relevant third-party providers for information about international transfers.
+
+10. CHANGES TO THIS PRIVACY POLICY
+
+We may update this Privacy Policy from time to time.
+
+When we make changes, we will update the effective date shown at the beginning of this policy. Material changes may also be communicated through the Application or by other means where required by law.
+
+11. CONTACT US
+
+If you have questions about this Privacy Policy or the privacy practices of Mi Montessori, contact:
+
+Alex Contreras
+Email: alex1819.dev@gmail.com

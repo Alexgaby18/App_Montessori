@@ -269,7 +269,7 @@ class _CompleteSyllablesScreenState extends State<CompleteSyllablesScreen> {
             _pool.remove(data);
           });
 
-          await AudioService.instance.speak(_isUppercase ? _syllables[index] : _syllables[index].toLowerCase());
+          await AudioService.instance.speakSyllable(_syllables[index]);
           if (_isCompleted) {
             await _onCorrectComplete();
           }
