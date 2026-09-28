@@ -30,8 +30,9 @@ class ArasaacApi {
     final canonicalKeyword = _canonicalKeyword(keyword);
 
     // Si ya tenemos el archivo en caché, retornarlo
-    if (_memoryCache.containsKey(canonicalKeyword)) {
-      return _memoryCache[canonicalKeyword];
+    final cachedFile = _memoryCache[canonicalKeyword];
+    if (cachedFile != null) {
+      return cachedFile;
     }
 
     // Si ya existe en disco, usarlo sin volver a descargar
@@ -49,19 +50,25 @@ class ArasaacApi {
     // Crear nuevo Future y cachearlo
     final future = _fetchPictogramInternal(canonicalKeyword);
     _futureCache[canonicalKeyword] = future;
-    
+
     // Cuando se complete, mover de futureCache a memoryCache
     final result = await future;
-    _memoryCache[canonicalKeyword] = result;
+    if (result != null) {
+      _memoryCache[canonicalKeyword] = result;
+    }
     _futureCache.remove(canonicalKeyword);
-    
+
     return result;
   }
 
   static Future<File?> _fetchPictogramInternal(String canonicalKeyword) async {
     try {
-      final searchUrl = Uri.parse("https://api.arasaac.org/v1/pictograms/es/search/$canonicalKeyword");
-      final searchResponse = await http.get(searchUrl);
+      final searchUrl = Uri.parse(
+        "https://api.arasaac.org/v1/pictograms/es/search/$canonicalKeyword",
+      );
+      final searchResponse = await http
+          .get(searchUrl)
+          .timeout(const Duration(seconds: 15));
       if (searchResponse.statusCode != 200) return null;
 
       final List<dynamic> pictogramas = jsonDecode(searchResponse.body);
@@ -77,17 +84,25 @@ class ArasaacApi {
             }
           }
         }
-        final name = pictograma['keyword'] ?? pictograma['name'] ?? pictograma['text'];
-        if (name is String && _canonicalKeyword(name) == canonicalKeyword) return true;
+        final name =
+            pictograma['keyword'] ?? pictograma['name'] ?? pictograma['text'];
+        if (name is String && _canonicalKeyword(name) == canonicalKeyword)
+          return true;
         return false;
       });
 
-      final selected = exactIndex >= 0 ? pictogramas[exactIndex] : pictogramas[0];
+      final selected = exactIndex >= 0
+          ? pictogramas[exactIndex]
+          : pictogramas[0];
       final pictogramId = selected["_id"];
       if (pictogramId == null) return null;
 
-      final imageUrl = Uri.parse("https://api.arasaac.org/v1/pictograms/$pictogramId?download=true");
-      final imageResponse = await http.get(imageUrl);
+      final imageUrl = Uri.parse(
+        "https://api.arasaac.org/v1/pictograms/$pictogramId?download=true",
+      );
+      final imageResponse = await http
+          .get(imageUrl)
+          .timeout(const Duration(seconds: 15));
       if (imageResponse.statusCode != 200) return null;
 
       final file = await _localFileFor(canonicalKeyword);
@@ -101,12 +116,33 @@ class ArasaacApi {
   }
 
   // Método para precargar todos los pictogramas necesarios
-  static Future<void> preloadPictograms(List<String> keywords) async {
-    for (final keyword in keywords) {
-      final canonicalKeyword = _canonicalKeyword(keyword);
-      if (!_memoryCache.containsKey(canonicalKeyword) && !_futureCache.containsKey(canonicalKeyword)) {
-        await fetchPictogram(canonicalKeyword);
+  static Future<void> preloadPictograms(
+    List<String> keywords, {
+    void Function(int completed, int total)? onProgress,
+  }) async {
+    final missing = <String>[];
+    for (final canonicalKeyword in keywords.map(_canonicalKeyword).toSet()) {
+      if (canonicalKeyword.isEmpty || _memoryCache[canonicalKeyword] != null)
+        continue;
+
+      final localFile = await _localFileFor(canonicalKeyword);
+      if (!await localFile.exists()) missing.add(canonicalKeyword);
+    }
+
+    if (missing.isEmpty) return;
+
+    var nextIndex = 0;
+    var completed = 0;
+    onProgress?.call(completed, missing.length);
+
+    Future<void> worker() async {
+      while (nextIndex < missing.length) {
+        final keyword = missing[nextIndex++];
+        await fetchPictogram(keyword);
+        onProgress?.call(++completed, missing.length);
       }
     }
+
+    await Future.wait(List.generate(3, (_) => worker()));
   }
 }

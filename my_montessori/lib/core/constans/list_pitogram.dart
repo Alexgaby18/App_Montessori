@@ -50,7 +50,7 @@ const List<Letter> letters = [
   Letter(char: 'Q', words: ['Queso', 'Quince', 'Quinto', 'Química']),
   Letter(char: 'R', words: ['Ratón', 'Rosa', 'Rueda', 'Rana']),
   Letter(char: 'S', words: ['Sol', 'Silla', 'Sopa', 'Saco']),
-  Letter(char: 'T', words: ['Toro', 'Taza', 'Tren', 'Teléfono']),  
+  Letter(char: 'T', words: ['Toro', 'Taza', 'Tren', 'Teléfono']),
   Letter(char: 'U', words: ['Uva', 'Ukelele', 'Universo', 'Uno']),
   Letter(char: 'V', words: ['Vaca', 'Vaso', 'Verde', 'Volcán']),
   Letter(char: 'W', words: ['Wifi', 'Whisky', 'Web', 'Wok']),
@@ -97,7 +97,7 @@ class Word {
   String toString() => 'Word(text: $text, parent: ${parent.char})';
 }
 
-// Genera la lista de palabras a partir de `letters` 
+// Genera la lista de palabras a partir de `letters`
 final List<Word> words = [
   for (final l in letters)
     for (final w in l.words) Word(text: w, parent: l),
@@ -172,42 +172,42 @@ const Map<String, List<Letter>> syllablesByLetter = {
     Letter(char: 'RO', words: ['Rosa', 'Roca', 'Rollo', 'Robo']),
     Letter(char: 'RU', words: ['Rueda', 'Ruleta', 'Rubí', 'Rusia']),
   ],
-  'F':[
+  'F': [
     Letter(char: 'FA', words: ['Faro', 'Falda', 'Fases', 'Fantasma']),
     Letter(char: 'FE', words: ['Feliz', 'Feria', 'Feroz', 'Feo']),
     Letter(char: 'FI', words: ['Fila', 'Fiesta', 'Fin', 'Ficha']),
     Letter(char: 'FO', words: ['Foca', 'Foco', 'Fondo', 'Fósil']),
     Letter(char: 'FU', words: ['Fuego', 'Futbol', 'Furioso', 'Funda']),
   ],
-  'B':[
+  'B': [
     Letter(char: 'BA', words: ['Bala', 'Barco', 'Ballena', 'Bajo']),
     Letter(char: 'BE', words: ['Bebé', 'Beso', 'Bello', 'Beber']),
     Letter(char: 'BI', words: ['Bicicleta', 'Billete', 'Bingo', 'Bigote']),
     Letter(char: 'BO', words: ['Boca', 'Bola', 'Bote', 'Bolo']),
     Letter(char: 'BU', words: ['Burro', 'Búho', 'Buzo', 'Buey']),
   ],
-  'V':[
+  'V': [
     Letter(char: 'VA', words: ['Vaca', 'Vaso', 'Vago', 'Valle']),
     Letter(char: 'VE', words: ['Vela', 'Ventana', 'Verde', 'Ver']),
     Letter(char: 'VI', words: ['Vino', 'Vida', 'Viento', 'Violeta']),
     Letter(char: 'VO', words: ['Volar', 'Volcán', 'Volante', 'Votar']),
     Letter(char: 'VU', words: ['Vuelo', 'Vuelta', 'Vuestro']),
   ],
-  'G':[
+  'G': [
     Letter(char: 'GA', words: ['Gato', 'Gafas', 'Gallo', 'Gamba']),
     Letter(char: 'GE', words: ['Genio', 'Gente', 'Gel', 'Genial']),
     Letter(char: 'GI', words: ['Girasol', 'Gigante', 'Gimnasio', 'Giro']),
     Letter(char: 'GO', words: ['Goma', 'Gol', 'Gordo', 'Gorro']),
     Letter(char: 'GU', words: ['Guitarra', 'Guante', 'Guion', 'Guerra']),
   ],
-  'H':[
+  'H': [
     Letter(char: 'HA', words: ['Hada', 'Hacha', 'Hablar', 'Hambre']),
     Letter(char: 'HE', words: ['Helado', 'Hermana', 'Herida', 'Hervir']),
     Letter(char: 'HI', words: ['Hielo', 'Higo', 'Hilo', 'Hipo']),
     Letter(char: 'HO', words: ['Hoja', 'Hormiga', 'Hombre', 'Hora']),
     Letter(char: 'HU', words: ['Humo', 'Huella', 'Hueso', 'Huevo']),
   ],
-  'J':[
+  'J': [
     Letter(char: 'JA', words: ['Jabón', 'Jarra', 'Jardín', 'Japón']),
     Letter(char: 'JE', words: ['Jefe', 'Jeringa', 'Jengibre', 'Jet']),
     Letter(char: 'JI', words: ['Jirafa', 'Jinete', 'Jilguero', 'Jibia']),
@@ -217,8 +217,8 @@ const Map<String, List<Letter>> syllablesByLetter = {
   // Añade más letras/sílabas según necesites...
 };
 
-  // Lista de oraciones simples en español (frases cortas proporcionadas)
-  const List<String> simpleSentences = [
+// Lista de oraciones simples en español (frases cortas proporcionadas)
+const List<String> simpleSentences = [
   // --- NIVEL 1: Oraciones cortas (3 palabras) ---
   'El niño salta.',
   'El bebé llora.',
@@ -295,7 +295,8 @@ const Map<String, String> _conjugationOverrides = {
   'estan': 'estar',
   'estoy': 'estar',
   'quiero': 'querer',
-  'quieren': 'desear', // desambiguación: "querer" como deseo en la frase de jugar
+  'quieren':
+      'desear', // desambiguación: "querer" como deseo en la frase de jugar
   'mira': 'mirar',
   'baila': 'bailar',
   'dibuja': 'dibujar',
@@ -352,7 +353,19 @@ List<String> _generateInfinitiveCandidates(String normToken) {
   }
 
   // terminaciones de presente/pasado comunes -> intentar raíz + infinitivos
-  final commonEndings = ['o', 'as', 'es', 'a', 'an', 'en', 'amos', 'emos', 'imos', 'aron', 'ieron'];
+  final commonEndings = [
+    'o',
+    'as',
+    'es',
+    'a',
+    'an',
+    'en',
+    'amos',
+    'emos',
+    'imos',
+    'aron',
+    'ieron',
+  ];
   for (final end in commonEndings) {
     if (normToken.endsWith(end) && normToken.length > end.length + 1) {
       final root = normToken.substring(0, normToken.length - end.length);
@@ -407,7 +420,8 @@ class TokenPictogram {
   }
 
   @override
-  String toString() => 'TokenPictogram(token: $token, match: ${match?.text}, searchKey: $searchKey)';
+  String toString() =>
+      'TokenPictogram(token: $token, match: ${match?.text}, searchKey: $searchKey)';
 }
 
 class SentencePictograms {
@@ -415,7 +429,8 @@ class SentencePictograms {
   final List<TokenPictogram> tokens;
   const SentencePictograms({required this.text, required this.tokens});
 
-  Future<List<File?>> pictogramFiles() => Future.wait(tokens.map((t) => t.pictogramFile()).toList());
+  Future<List<File?>> pictogramFiles() =>
+      Future.wait(tokens.map((t) => t.pictogramFile()).toList());
 
   @override
   String toString() => 'SentencePictograms(text: $text, tokens: $tokens)';
@@ -426,11 +441,33 @@ final List<Word> _combinedWords = [...words, ...vowelWords, ...syllableWords];
 final RegExp _wordRegex = RegExp(r"[A-Za-zÁÉÍÓÚáéíóúÑñÜü]+", unicode: true);
 
 final Set<String> _articles = {
-  'el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'mi', 'mis', 'tu', 'tus', 'su', 'sus', 'lo',
-  'a', 'de', 'por', 'con', 'en', 'al', 'del', 'y'
+  'el',
+  'la',
+  'los',
+  'las',
+  'un',
+  'una',
+  'unos',
+  'unas',
+  'mi',
+  'mis',
+  'tu',
+  'tus',
+  'su',
+  'sus',
+  'lo',
+  'a',
+  'de',
+  'por',
+  'con',
+  'en',
+  'al',
+  'del',
+  'y',
 };
 
-bool _isArticleToken(String token) => _articles.contains(_normalizeForMatch(token));
+bool _isArticleToken(String token) =>
+    _articles.contains(_normalizeForMatch(token));
 
 List<String> resolveInfinitiveCandidates(String rawToken) {
   final normalized = _normalizeForMatch(rawToken);
@@ -464,33 +501,65 @@ final List<SentencePictograms> sentencePictograms = simpleSentences.map((s) {
     final nextNorm = next != null ? _normalizeForMatch(next.token) : '';
 
     // artículo + sustantivo -> un único pictograma corto
-    if (_articles.contains(currNorm) && next != null && !_articles.contains(nextNorm)) {
+    if (_articles.contains(currNorm) &&
+        next != null &&
+        !_articles.contains(nextNorm)) {
       final searchKey = next.match?.text ?? next.token;
-      merged.add(TokenPictogram(token: '${t.token} ${next.token}', match: next.match, searchKey: searchKey));
+      merged.add(
+        TokenPictogram(
+          token: '${t.token} ${next.token}',
+          match: next.match,
+          searchKey: searchKey,
+        ),
+      );
       i++;
       continue;
     }
 
     // preposición + artículo -> unir solo este par; dejar el sustantivo como siguiente pictograma
-    if (['a', 'de', 'por', 'con', 'en'].contains(currNorm) && next != null && _articles.contains(nextNorm)) {
+    if (['a', 'de', 'por', 'con', 'en'].contains(currNorm) &&
+        next != null &&
+        _articles.contains(nextNorm)) {
       final searchKey = next.match?.text ?? next.token;
-      merged.add(TokenPictogram(token: '${t.token} ${next.token}', match: next.match, searchKey: searchKey));
+      merged.add(
+        TokenPictogram(
+          token: '${t.token} ${next.token}',
+          match: next.match,
+          searchKey: searchKey,
+        ),
+      );
       i++;
       continue;
     }
 
     // preposición + sustantivo (sin artículo) -> también puede ir junto
-    if (['a', 'de', 'por', 'con', 'en'].contains(currNorm) && next != null && !_articles.contains(nextNorm)) {
+    if (['a', 'de', 'por', 'con', 'en'].contains(currNorm) &&
+        next != null &&
+        !_articles.contains(nextNorm)) {
       final searchKey = next.match?.text ?? next.token;
-      merged.add(TokenPictogram(token: '${t.token} ${next.token}', match: next.match, searchKey: searchKey));
+      merged.add(
+        TokenPictogram(
+          token: '${t.token} ${next.token}',
+          match: next.match,
+          searchKey: searchKey,
+        ),
+      );
       i++;
       continue;
     }
 
     // contracciones tipo al/del + sustantivo -> par muy corto
-    if ((currNorm == 'al' || currNorm == 'del') && next != null && !_articles.contains(nextNorm)) {
+    if ((currNorm == 'al' || currNorm == 'del') &&
+        next != null &&
+        !_articles.contains(nextNorm)) {
       final searchKey = next.match?.text ?? next.token;
-      merged.add(TokenPictogram(token: '${t.token} ${next.token}', match: next.match, searchKey: searchKey));
+      merged.add(
+        TokenPictogram(
+          token: '${t.token} ${next.token}',
+          match: next.match,
+          searchKey: searchKey,
+        ),
+      );
       i++;
       continue;
     }
@@ -550,7 +619,9 @@ Set<String> _collectAllPictogramKeywords() {
   return keywords;
 }
 
-Future<void> prefetchAllAppPictograms() async {
+Future<void> prefetchAllAppPictograms({
+  void Function(int completed, int total)? onProgress,
+}) async {
   final keywords = _collectAllPictogramKeywords().toList();
-  await ArasaacApi.preloadPictograms(keywords);
+  await ArasaacApi.preloadPictograms(keywords, onProgress: onProgress);
 }
