@@ -177,17 +177,25 @@ class _CompleteRandomLettersScreenState extends State<CompleteRandomLettersScree
                   ),
                 ),
                 const SizedBox(height: 30),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(_word.length, (i) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 6),
-                        child: _buildSlot(i),
-                      );
-                    }),
-                  ),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final defaultSlotSize = screenWidth > 600 ? 80.0 : 54.0;
+                    const slotSpacing = 12.0;
+                    final availableSlotSize =
+                        (constraints.maxWidth - slotSpacing * _word.length) /
+                            _word.length;
+                    final slotSize = min(defaultSlotSize, availableSlotSize);
+
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(_word.length, (i) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 6),
+                          child: _buildSlot(i, slotSize),
+                        );
+                      }),
+                    );
+                  },
                 ),
                 const SizedBox(height: 30),
                 Padding(
@@ -208,11 +216,8 @@ class _CompleteRandomLettersScreenState extends State<CompleteRandomLettersScree
     );
   }
 
-  Widget _buildSlot(int index) {
+  Widget _buildSlot(int index, double sizeButtonLetter) {
     final content = _slots[index];
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isTablet = screenWidth > 600; // threshold ajustable
-    final sizeButtonLetter = isTablet ? 80.0 : 54.0;
 
     final isMissing = _missingIndexes.contains(index);
     if (!isMissing) {

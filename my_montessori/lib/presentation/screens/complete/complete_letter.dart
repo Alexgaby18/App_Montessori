@@ -116,8 +116,10 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
     final prevIndex = (widget.index - 1).clamp(0, letters.length - 1);
     final nextIndex = (widget.index + 1).clamp(0, letters.length - 1);
     final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     final isTablet = screenWidth > 600; // threshold ajustable
-    final sizePictogram = isTablet ? 280.0 : 180.0;
+    final isCompactHeight = screenHeight < 700;
+    final sizePictogram = isTablet ? 280.0 : (isCompactHeight ? 150.0 : 180.0);
     final sizeIcon = isTablet ? 48.0 : 24.0;
 
     final Future mainPictogramFuture = _letterObj.pictogramFile(_letterObj.words.first);
@@ -158,7 +160,7 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
           SafeArea(
             child: Column(
               children: [
-                const SizedBox(height: 100),
+                SizedBox(height: isCompactHeight ? 64 : 100),
 
                 // pictograma grande usando ButtonPictogramLetters (muestra imagen + nombre)
                 Center(
@@ -205,17 +207,25 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
                 const SizedBox(height: 30),
 
                 // palabra objetivo: mostrada con la primera letra como DragTarget y el resto visibles
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(_word.length, (i) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 6),
-                        child: _buildSlot(i),
-                      );
-                    }),
-                  ),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final defaultSlotSize = isTablet ? 80.0 : 54.0;
+                    const slotSpacing = 12.0;
+                    final availableSlotSize =
+                        (constraints.maxWidth - slotSpacing * _word.length) /
+                            _word.length;
+                    final slotSize = min(defaultSlotSize, availableSlotSize);
+
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(_word.length, (i) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 6),
+                          child: _buildSlot(i, slotSize),
+                        );
+                      }),
+                    );
+                  },
                 ),
 
                 const SizedBox(height: 30),
@@ -242,11 +252,8 @@ class _CompleteLetterScreenState extends State<CompleteLetterScreen> {
     );
   }
 
-  Widget _buildSlot(int index) {
+  Widget _buildSlot(int index, double sizeButtonLetter) {
     final content = _slots[index];
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isTablet = screenWidth > 600; // threshold ajustable
-    final sizeButtonLetter = isTablet ? 80.0 : 54.0;
     // Si no es la posición objetivo, mostramos la letra fija del _word
     if (index != _targetIndex) {
       return Container(
