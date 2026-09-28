@@ -4,7 +4,9 @@ import 'package:my_montessori/core/theme/animatic_background.dart';
 import 'package:my_montessori/core/constans/list_pitogram.dart';
 import 'package:my_montessori/presentation/widgets/button_pictogram_letter.dart';
 import 'package:my_montessori/core/services/audio_service.dart';
+import 'package:my_montessori/core/services/internet_connection_service.dart';
 import 'package:my_montessori/presentation/controllers/speak_word_controller.dart';
+import 'package:my_montessori/presentation/widgets/internet_required_dialog.dart';
 
 class SpeakWordScreen extends StatefulWidget {
   final Word word;
@@ -20,6 +22,7 @@ class _SpeakWordScreenState extends State<SpeakWordScreen> {
   late VoidCallback _controllerListener;
   late Future<File?> _pictogramFuture;
   bool _isUppercase = true;
+  bool _checkingInternet = false;
 
   void _onAdvanceTo(int nextIndex) {
     if (!mounted) return;
@@ -52,7 +55,21 @@ class _SpeakWordScreenState extends State<SpeakWordScreen> {
     }
   }
 
-  void _startListening() => _controller.startListening();
+  Future<void> _startListening() async {
+    if (_checkingInternet) return;
+    _checkingInternet = true;
+    try {
+      final hasInternet = await InternetConnectionService.hasInternetAccess();
+      if (!mounted) return;
+      if (!hasInternet) {
+        await InternetRequiredDialog.show(context);
+        return;
+      }
+      await _controller.startListening();
+    } finally {
+      _checkingInternet = false;
+    }
+  }
 
   void _stopListening() => _controller.stopListening();
 

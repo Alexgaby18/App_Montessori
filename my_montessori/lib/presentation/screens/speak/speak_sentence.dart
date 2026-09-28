@@ -4,7 +4,9 @@ import 'package:my_montessori/core/theme/animatic_background.dart';
 import 'package:my_montessori/core/constans/list_pitogram.dart';
 import 'package:my_montessori/presentation/widgets/button_pictogram_letter.dart';
 import 'package:my_montessori/core/services/audio_service.dart';
+import 'package:my_montessori/core/services/internet_connection_service.dart';
 import 'package:my_montessori/presentation/controllers/speak_sentence_controller.dart';
+import 'package:my_montessori/presentation/widgets/internet_required_dialog.dart';
 
 class SpeakSentenceScreen extends StatefulWidget {
   final int index;
@@ -20,6 +22,7 @@ class _SpeakSentenceScreenState extends State<SpeakSentenceScreen> {
   late SpeakSentenceController _controller;
   late VoidCallback _controllerListener;
   bool _isUppercase = true;
+  bool _checkingInternet = false;
   final Map<String, Future<File?>> _pictogramFutureCache = {};
 
   String _tokenCacheKey(SentencePictograms sentence, TokenPictogram token, int tokenIndex) {
@@ -76,7 +79,21 @@ class _SpeakSentenceScreenState extends State<SpeakSentenceScreen> {
     return index.clamp(0, total - 1);
   }
 
-  void _startListening() => _controller.startListening();
+  Future<void> _startListening() async {
+    if (_checkingInternet) return;
+    _checkingInternet = true;
+    try {
+      final hasInternet = await InternetConnectionService.hasInternetAccess();
+      if (!mounted) return;
+      if (!hasInternet) {
+        await InternetRequiredDialog.show(context);
+        return;
+      }
+      await _controller.startListening();
+    } finally {
+      _checkingInternet = false;
+    }
+  }
 
   void _stopListening() => _controller.stopListening();
 
