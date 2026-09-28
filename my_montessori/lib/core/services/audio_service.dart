@@ -14,6 +14,7 @@ class AudioService {
   late final FlutterTts _tts;
   late final AudioPlayer _player;
   late final Future<void> _ttsReady;
+  bool _isPlaying = false;
 
   Future<void> _configureTts() async {
     final spanishVoiceAvailable = await _selectSpanishVoice();
@@ -124,6 +125,20 @@ class AudioService {
 
   /// Habla cualquier texto por TTS
   Future<void> speak(String text) async {
+    await _playIfIdle(() => _speak(text));
+  }
+
+  Future<void> _playIfIdle(Future<void> Function() playback) async {
+    if (_isPlaying) return;
+    _isPlaying = true;
+    try {
+      await playback();
+    } finally {
+      _isPlaying = false;
+    }
+  }
+
+  Future<void> _speak(String text) async {
     final normalizedText = text.toLowerCase();
     try {
       await _ttsReady;
@@ -177,14 +192,15 @@ class AudioService {
     final key = letter.trim()[0].toUpperCase();
     final assetPath = 'assets/audio/letters_sounds/${key.toLowerCase()}.mp3';
 
-    try {
-      // intenta cargar el asset (lanza excepción si no existe)
-      await rootBundle.load(assetPath);
-      await _player.setAsset(assetPath);
-      await _player.play();
-    } catch (_) {
-      final phon = _phoneticFallback[key] ?? key;
-      await speak(phon);
-    }
+    await _playIfIdle(() async {
+      try {
+        await rootBundle.load(assetPath);
+        await _player.setAsset(assetPath);
+        await _player.play();
+      } catch (_) {
+        final phon = _phoneticFallback[key] ?? key;
+        await _speak(phon);
+      }
+    });
   }
 }
