@@ -2,6 +2,7 @@ import 'dart:developer' as console;
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:my_montessori/core/services/daily_practice_reminder.dart';
 import 'package:my_montessori/core/services/pictogram_prefetch_service.dart';
 import 'package:my_montessori/core/theme/animatic_background.dart';
 import 'package:my_montessori/presentation/widgets/button_pictogram.dart';
@@ -27,6 +28,18 @@ class _HomeState extends State<Home> {
       _messenger = ScaffoldMessenger.of(context);
       PictogramPrefetchService.progress.addListener(_updatePrefetchSnackBar);
       unawaited(PictogramPrefetchService.runOnStartup());
+      unawaited(
+        DailyPracticeReminder.initializeAndSchedule().catchError((
+          Object error,
+          StackTrace stackTrace,
+        ) {
+          console.log(
+            'No se pudo programar el recordatorio diario.',
+            error: error,
+            stackTrace: stackTrace,
+          );
+        }),
+      );
     });
   }
 
