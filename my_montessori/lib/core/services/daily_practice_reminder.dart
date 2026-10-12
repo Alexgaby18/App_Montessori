@@ -8,7 +8,7 @@ class DailyPracticeReminder {
   DailyPracticeReminder._();
 
   static const int _notificationId = 1900;
-  static const int _reminderHour = 19;
+  static const int _reminderHour = 16;
   static const int _reminderMinute = 0;
 
   static final FlutterLocalNotificationsPlugin _notifications =
